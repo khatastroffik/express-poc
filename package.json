@@ -67,6 +67,6 @@
     "typescript-eslint": "^8.50.1"
   },
   "lint-staged": {
-    "*.ts": "pnpm lintix"
+    "*.ts": "pnpm lint"
   }
 }
