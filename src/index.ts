@@ -14,6 +14,8 @@ const server = app.listen(env.PORT, () => {
   log.info(`Server is running at ${env.HOST}:${env.PORT}`);
   log.info(`Log level is '${log.level}'`);
   log.debug(`Environment is\n${format("%s", env)}`, { environment: env });
+  const dummyError = new Error("This error has been generated for testing purpose and do not affect the API server.");
+  log.error(dummyError as unknown);
 });
 
 /**

@@ -1,7 +1,7 @@
 import winston from "winston";
 import { env } from "./environment";
 
-const { combine, timestamp, printf, colorize, json, uncolorize, splat } = winston.format;
+const { combine, timestamp, printf, colorize, json, uncolorize, splat, errors } = winston.format;
 const OneMB = 1024 * 1024;
 
 /**
@@ -15,10 +15,11 @@ const Logger = winston.createLogger({
   transports: [
     new winston.transports.Console({
       format: combine(
+        errors({ stack: true }),
         colorize(),
         timestamp(),
         splat(),
-        printf(info => `[${info.timestamp}]${info.label ? `[${info.label}]` : ""} ${info.level} ${info.message}`),
+        printf(info => `[${info.timestamp}]${info.label ? `[${info.label}]` : ""} ${info.level} ${env.NODE_DEV ? (info.stack ?? info.message) : info.message}`),
       ),
     }),
     new winston.transports.File({
@@ -27,6 +28,7 @@ const Logger = winston.createLogger({
       maxFiles: 1,
       tailable: true,
       format: combine(
+        errors({ stack: true }),
         splat(),
         timestamp(),
         uncolorize(),
