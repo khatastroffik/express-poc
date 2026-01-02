@@ -1,18 +1,28 @@
 import { exit } from "node:process";
 import z from "zod";
+import { FILEEXT_LOG, LAN_OR_WAN } from "./zod-schemas";
 import "dotenv/config";
 
-const LAN = z.string().nonempty().regex(/^(https?:\/\/)(?:localhost|127.0.0.1|0.0.0.0|192.168.\d{1,3}.\d{1,3})$/, "Invalid input: expected a protocol + LAN address");
-const WAN = z.url({ protocol: /^https?$/, hostname: z.regexes.domain, error: "Invalid input: expected a protocol + WAN host/domain name" });
-const LAN_OR_WAN = z.union([WAN, LAN], "Invalid input: expected an URL (protocol + LAN or WAN hostname/IP)");
-
+/**
+ * This schema defines the environment variables LOADED by
+ * the express server application process e.g. in an ".env" file.
+ * Some variables may be optional or may have a replacement/default
+ * value when not provided to the application process.
+ */
 const EnvironmentInput = z.object({
   NODE_ENV: z.enum(["development", "test", "staging", "production"]).default("development"),
   HOST: LAN_OR_WAN.default("http://localhost"),
   PORT: z.coerce.number().int().min(1024).max(49151).default(3000),
   BASE_URL: LAN_OR_WAN,
+  LOG_LEVEL: z.enum(["error", "warn", "info", "http", "verbose", "debug", "silly"]).optional(),
+  LOG_FILE: FILEEXT_LOG.default("express-poc.log"),
 });
 
+/**
+ * This schema defines the environment variables PROVIDED within
+ * the express server application.
+ * It is adapted from the EnvironmentInput schema to enhance the env information.
+ */
 const Environment = EnvironmentInput
   .transform(schema => ({
     ...EnvironmentInput.omit({ NODE_ENV: true }).parse(schema),
@@ -22,15 +32,27 @@ const Environment = EnvironmentInput
     NODE_PROD: schema.NODE_ENV === "production",
   }))
 ;
-export type Environment = z.infer<typeof Environment>;
 
-function parseEnv(): Environment {
+/**
+ * Parse and validate the environment information provided to the application process.
+ * @emits exit In case of a failed validation, the process/app terminates synchronously with an error code.
+ * @returns The parsed and validated Environment data as used within the app or NEVER in case of a failed validation.
+ */
+function parseEnv(): Environment | never {
   const result = Environment.safeParse(/* eslint-disable node/prefer-global/process */ process.env /* eslint-enable node/prefer-global/process */);
   if (!result.success) {
     result.error.issues.forEach(issue => console.error(`[Environment.${issue.path}] ${issue.message}`));
     exit(1);
   }
-
   return result.data;
 }
-export const env = parseEnv();
+
+/**
+ * The type of the enhanced environment information
+ */
+export type Environment = z.infer<typeof Environment>;
+
+/**
+ * The enhanced environment information made available to the application
+ */
+export const env: Environment = parseEnv();

@@ -2,7 +2,17 @@
 
 An API node.js/express.js service template i.e. Proof-of-Concept written in TypeScript.
 
-This PoC offers a *minimal-footprint* but *somehow opiniated* initial setup including the use of core libraries and tools like `typescript`, `tsx`, `jest`, `supertest`, `@antfu/eslint`, `husky`, `lint-staged`, `morgan`, `winston` and `zod` (see [Project Dependencies](#project-dependencies) below)
+This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup including the use of core libraries and tools like `typescript`, `tsx`, `jest`, `supertest`, `@antfu/eslint`, `husky`, `lint-staged`, `morgan`, `winston` and `zod` (see [Project Dependencies](#project-dependencies) below). It is not a "one-size-fits-all" solution, thus rather a suggestion for a smooth first express-js experience.
+
+## Functionality
+
+- [x] structured project code
+- [x] validated and extended environment configuration
+- [x] automated, configurable logging to the console (formated incl. ANIS-colors) and to a file (JSON structure)
+- [x] gracefull server termination
+- [ ] automated exeption and error handling
+- [ ] example endpoint structure showing usage of routing, controller, data transfer object, validation and data access service
+- [ ] OpenAPI (Swagger) endpoints documentation
 
 ## Setup
 
