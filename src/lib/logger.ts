@@ -5,21 +5,30 @@ const { combine, timestamp, printf, colorize, json, uncolorize, splat, errors } 
 const OneMB = 1024 * 1024;
 
 /**
+ * Generate a message-part out of the winston info object with regard to the environment and error context.
+ * @param info the info object as provided by winston within a format callback
+ * @returns a formated message
+ */
+function formatConsoleInfoMessage(info: winston.Logform.TransformableInfo): string {
+  return (env.NODE_DEV && info.stack) ? `${info.stack}` : info.name ? `${info.name} ${info.message}` : `${info.message}`;
+}
+
+/**
  * Default, configurable application wide logger engine to
  * output/export logs in the console and in a log file,
  */
 const Logger = winston.createLogger({
   levels: winston.config.npm.levels,
-  exitOnError: !env.NODE_TEST,
+  // exitOnError: !env.NODE_TEST,
   level: env.LOG_LEVEL ?? (env.NODE_DEV ? "debug" : "http"),
+  format: combine(errors({ stack: true })), // IMPORTANT - "errors(...)"" MUST BE CALLED OUTSIDE OF THE TRANSPORT FORMAT-CALLBACKS BELOW
   transports: [
     new winston.transports.Console({
       format: combine(
-        errors({ stack: true }),
         colorize(),
         timestamp(),
         splat(),
-        printf(info => `[${info.timestamp}]${info.label ? `[${info.label}]` : ""} ${info.level} ${env.NODE_DEV ? (info.stack ?? info.message) : info.message}`),
+        printf(info => `[${info.timestamp}]${info.label ? `[${info.label}]` : ""} ${info.level} ${formatConsoleInfoMessage(info)}`),
       ),
     }),
     new winston.transports.File({
@@ -28,7 +37,6 @@ const Logger = winston.createLogger({
       maxFiles: 1,
       tailable: true,
       format: combine(
-        errors({ stack: true }),
         splat(),
         timestamp(),
         uncolorize(),
