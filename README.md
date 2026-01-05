@@ -2,7 +2,7 @@
 
 An API node.js/express.js service template i.e. Proof-of-Concept written in TypeScript.
 
-This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup including the use of core libraries and tools like `typescript`, `tsx`, `jest`, `supertest`, `@antfu/eslint`, `husky`, `lint-staged`, `morgan`, `winston` and `zod` (see [Project Dependencies](#project-dependencies) below). It is not a "one-size-fits-all" solution, thus rather a suggestion for a smooth first express-js experience.
+This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup including the use of core libraries and tools like `typescript`, `tsx`, `jest`, `supertest`, `@antfu/eslint`, `husky`, `lint-staged`, `morgan`, `winston` and `zod` (see [Project](#project) below). It is not a "one-size-fits-all" solution, thus rather a suggestion for a smooth first express-js experience.
 
 ## Functionality
 
@@ -111,7 +111,46 @@ Here are some *suggestions* for improving the setup:
 - strengthen the express-server configuration!
 - edit the **README** file
 
-## Project Dependencies
+## Project
+
+### File &amp; folder structure
+
+```text
+express-poc
+  ├── .husky
+  │   └── pre-commit
+  ├── .vscode
+  │   ├── extensions.json
+  │   └── settings.json
+  ├── docs
+  │   └── readme.md
+  ├── src
+  │   ├── lib
+  │   │   ├── ansi-colors.ts
+  │   │   ├── environment.ts
+  │   │   ├── errors.ts
+  │   │   ├── logger.ts
+  │   │   ├── pretty-bytes.ts
+  │   │   ├── simulations.ts
+  │   │   └── zod-schemas.ts
+  │   ├── middleware
+  │   │   ├── catch-all.ts
+  │   │   └── morgan.ts
+  │   ├── app.ts
+  │   ├── index.ts
+  ├── .env
+  ├── .gitignore
+  ├── client-simulator.rest
+  ├── eslint.config.mjs
+  ├── jest.config.js
+  ├── package.json
+  ├── pnpm-lock.yaml
+  ├── pnpm-workspace.yaml
+  ├── README.md
+  └── tsconfig.json
+```
+
+<!-- node bin\tree-cli.js --ignore node_modules,.git,dist,logs,.husky\_ --dir ..\express-poc -->
 
 ### List of direct dependencies
 
