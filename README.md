@@ -13,10 +13,12 @@ This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup inclu
   - [x] Log methods (one for each of the log-levels) support an optional *label* configuration to better scope the different log entries
 - [x] automated, configurable logging to the console (formated incl. ANIS-colors) and to a file (JSON structure)
 - [x] gracefull server termination
-- [ ] automated exeption and error handling
+- [x] automated exeption and error handling
   - [x] error stack is automatically added to logs in the log file and only if running in *development* mode to logs in the console
-  - [ ] automatic catching/logging of unhandled exceptions and rejections
-  - [ ] ready-to-use error classes mapping specific HTTP errors/status
+  - [x] automatic catching/logging of unhandled exceptions and rejections
+  - [x] ready-to-use error classes mapping specific HTTP errors/status
+- [x] simulation endpoints to showcase logging, catching errors and handling uncaught exceptions &amp; rejections
+- [x] client-simulator (using the VSCode [*REST Client*](https://github.com/Huachao/vscode-restclient.git)&#11127; extension)
 - [ ] example endpoint structure showing usage of routing, controller, data transfer object, validation and data access service
 - [ ] OpenAPI (Swagger) endpoints documentation
 
