@@ -8,9 +8,15 @@ This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup inclu
 
 - [x] structured project code
 - [x] validated and extended environment configuration
+  - [x] identify the node environments *development*, *test*, *staging* and *production*
+  - [x] Log-levels (*error*, *warn*, *info*, *http*, *debug* and *silly*) and path to the Log-File
+  - [x] Log methods (one for each of the log-levels) support an optional *label* configuration to better scope the different log entries
 - [x] automated, configurable logging to the console (formated incl. ANIS-colors) and to a file (JSON structure)
 - [x] gracefull server termination
 - [ ] automated exeption and error handling
+  - [x] error stack is automatically added to logs in the log file and only if running in *development* mode to logs in the console
+  - [ ] automatic catching/logging of unhandled exceptions and rejections
+  - [ ] ready-to-use error classes mapping specific HTTP errors/status
 - [ ] example endpoint structure showing usage of routing, controller, data transfer object, validation and data access service
 - [ ] OpenAPI (Swagger) endpoints documentation
 

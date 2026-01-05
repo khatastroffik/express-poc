@@ -1,10 +1,10 @@
 import { exit } from "node:process";
-import { format } from "node:util";
 import app from "./app";
 import { env } from "./lib/environment";
 import logger from "./lib/logger";
+import { simulateUncaughtExceptionsOrRejections } from "./lib/simulations";
 
-const log = logger("APP");
+const log = logger("MAIN");
 
 /**
  * Start the express server:
@@ -12,16 +12,20 @@ const log = logger("APP");
  */
 const server = app.listen(env.PORT, () => {
   log.info(`Server is running at ${env.HOST}:${env.PORT}`);
-  log.info(`Log level is '${log.level}'`);
-  log.debug(`Environment is\n${format("%s", env)}`, { environment: env });
+
+  /**
+   * Simulate an unhandled "exception" or "rejection" using the
+   * corresponding function parameter.
+   * Disable the simulation using the "noop" value.
+   */
+  simulateUncaughtExceptionsOrRejections("noop");
 });
 
 /**
  * Catch the SIGINT process event triggered at OS-level:
  * cleanup/teardown the server and ressources.
  */
-// eslint-disable-next-line node/prefer-global/process
-process.once("SIGINT", () => {
+process.once("SIGINT", () => { // eslint-disable-line node/prefer-global/process
   log.info("Closing server...");
   if (server.listening) {
     log.info("Tearing services down...");

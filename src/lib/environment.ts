@@ -1,4 +1,5 @@
 import { exit } from "node:process";
+import { format } from "node:util";
 import z from "zod";
 import { FILEEXT_LOG, LAN_OR_WAN } from "./zod-schemas";
 import "dotenv/config";
@@ -15,7 +16,7 @@ const EnvironmentInput = z.object({
   PORT: z.coerce.number().int().min(1024).max(49151).default(3000),
   BASE_URL: LAN_OR_WAN,
   LOG_LEVEL: z.enum(["error", "warn", "info", "http", "verbose", "debug", "silly"]).optional(),
-  LOG_FILE: FILEEXT_LOG.default("express-poc.log"),
+  LOG_FILE: FILEEXT_LOG.default("./logs/express-poc.log"),
 });
 
 /**
@@ -39,12 +40,18 @@ const Environment = EnvironmentInput
  * @returns The parsed and validated Environment data as used within the app or NEVER in case of a failed validation.
  */
 function parseEnv(): Environment | never {
-  const result = Environment.safeParse(/* eslint-disable node/prefer-global/process */ process.env /* eslint-enable node/prefer-global/process */);
-  if (!result.success) {
-    result.error.issues.forEach(issue => console.error(`[Environment.${issue.path}] ${issue.message}`));
+  const parseResult = Environment.safeParse(/* eslint-disable node/prefer-global/process */ process.env /* eslint-enable node/prefer-global/process */);
+  if (!parseResult.success) {
+    parseResult.error.issues.forEach(issue => console.error(`[Environment.${issue.path}] ${issue.message}`));
     exit(1);
   }
-  return result.data;
+  const result = {
+    ...parseResult.data,
+    toString: () => {
+      return `${format("%s", parseResult.data)}`;
+    },
+  };
+  return result;
 }
 
 /**

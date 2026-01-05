@@ -4,7 +4,7 @@ import { colorize, statusColor } from "../lib/ansi-colors";
 import logger from "../lib/logger";
 import { prettyBytes } from "../lib/pretty-bytes";
 
-const log = logger("APP");
+const log = logger("MORG");
 
 /**
  * "coloredStatus" message token returning an ANSI-colored statuscode.
