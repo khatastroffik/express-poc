@@ -1,3 +1,4 @@
+import path, { dirname } from "node:path";
 import winston from "winston";
 import { env } from "./environment";
 
@@ -10,39 +11,42 @@ const OneMB = 1024 * 1024;
  * @returns a formated message
  */
 function formatConsoleInfoMessage(info: winston.Logform.TransformableInfo): string {
-  return (env.NODE_DEV && info.stack) ? `${info.stack}` : info.name ? `${info.name} ${info.message}` : `${info.message}`;
+  const errStack = env.NODE_DEV && info.stack ? `\n${info.stack}\n` : "";
+  const name = (info.statuscode ? info.statuscode : info.name);
+  const logIdentifier = name ? `${name} ` : "";
+  return `${logIdentifier}${info.message}${errStack}`;
 }
+
+const unhandledExceptionLogFile = path.join(dirname(env.LOG_FILE), "unhandled-exceptions.log");
+const unhandledRejectionsLogFile = path.join(dirname(env.LOG_FILE), "unhandled-rejections.log");
 
 /**
  * Default, configurable application wide logger engine to
- * output/export logs in the console and in a log file,
+ * output/export logs in the console and in log files.
+ * The logger also handles uncaught exceptions and rejections.
  */
 const Logger = winston.createLogger({
   levels: winston.config.npm.levels,
-  // exitOnError: !env.NODE_TEST,
+  exitOnError: !env.NODE_TEST,
   level: env.LOG_LEVEL ?? (env.NODE_DEV ? "debug" : "http"),
-  format: combine(errors({ stack: true })), // IMPORTANT - "errors(...)"" MUST BE CALLED OUTSIDE OF THE TRANSPORT FORMAT-CALLBACKS BELOW
+  format: combine(errors({ stack: true }), json({ space: !env.NODE_DEV ? 0 : 2 })), // IMPORTANT - "errors(...)" AND "json(...)" MUST BE CALLED OUTSIDE OF THE TRANSPORT FORMAT-CALLBACKS BELOW
   transports: [
     new winston.transports.Console({
-      format: combine(
-        colorize(),
-        timestamp(),
-        splat(),
-        printf(info => `[${info.timestamp}]${info.label ? `[${info.label}]` : ""} ${info.level} ${formatConsoleInfoMessage(info)}`),
-      ),
+      format: combine(colorize(), timestamp(), splat(), printf(info => `[${info.timestamp}]${info.label ? `[${info.label}]` : ""} ${info.level} ${formatConsoleInfoMessage(info)}`)),
     }),
     new winston.transports.File({
       filename: env.LOG_FILE,
       maxsize: OneMB,
       maxFiles: 1,
       tailable: true,
-      format: combine(
-        splat(),
-        timestamp(),
-        uncolorize(),
-        json({ space: !env.NODE_DEV ? 0 : 2 }),
-      ),
+      format: combine(splat(), timestamp(), uncolorize(), json({ space: !env.NODE_DEV ? 0 : 2 })),
     }),
+  ],
+  exceptionHandlers: [
+    new winston.transports.File({ filename: unhandledExceptionLogFile }),
+  ],
+  rejectionHandlers: [
+    new winston.transports.File({ filename: unhandledRejectionsLogFile }),
   ],
 });
 

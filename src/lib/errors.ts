@@ -4,7 +4,7 @@ import status from "http-status";
 type OnlyNumberKeys<T> = T extends number ? T : never;
 type StatusCodeKey = OnlyNumberKeys<keyof HttpStatus>;
 
-class HTTPError extends Error {
+export class HTTPError extends Error {
   public statuscode: StatusCodeKey;
   public override message: string;
   constructor(statuscode: StatusCodeKey, message?: string) {

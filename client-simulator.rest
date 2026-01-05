@@ -1,0 +1,30 @@
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+# |                                                           |
+# |    This "REST client simulation" requires the VSCode      |
+# |    extension "REST Client" as provided here:              |
+# |                                                           |
+# |    https://github.com/Huachao/vscode-restclient.git       |
+# |                                                           |
+# +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+@hostname = {{$dotenv HOST}}
+@port = {{$dotenv PORT}}
+@host = {{hostname}}:{{port}}
+@contentType = application/json
+
+### Simple Endpoint
+GET {{host}}
+
+### DISCLOSE (!) the server environemnt
+GET {{host}}/environment
+
+
+### Simulate server "logs" to console/file
+GET {{host}}/simulations/logs
+
+
+### Simulate server "catch-all" for unhandled exceptions
+GET {{host}}/simulations/exception
+
+### Simulate server "catch-all" for unhandled rejection [TERMINATING SERVER PROCESS]
+GET {{host}}/simulations/rejection
