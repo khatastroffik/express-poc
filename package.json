@@ -14,7 +14,7 @@
     "API",
     "PoC"
   ],
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "jest --passWithNoTests",
     "prepare": "husky",
