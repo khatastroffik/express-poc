@@ -21,12 +21,12 @@ class IDService {
    *
    * @returns a new unique ID string made of 6 symbols(chars)
    */
-  generateId(): string {
-    let newID: string = "";
+  generateId<BRANDED_ID_TYPE extends string>(): BRANDED_ID_TYPE {
+    let newID: BRANDED_ID_TYPE = "" as BRANDED_ID_TYPE;
     while (true) {
-      newID = nanoid(6);
+      newID = nanoid<BRANDED_ID_TYPE>(6);
       if (this.inUse(newID)) {
-        newID = ""; // loop if the ID is already in use
+        newID = "" as BRANDED_ID_TYPE; // loop if the ID is already in use
       }
       else {
         this.IDS.add(newID); // add the ID to the list of used IDs and break the loop
@@ -48,7 +48,7 @@ class IDService {
    *
    * @param id a unique ID string
    */
-  removeId(id: string): void {
+  removeId<BRANDED_ID_TYPE extends string>(id: BRANDED_ID_TYPE): void {
     this.IDS.delete(id);
   }
 
@@ -69,7 +69,7 @@ class IDService {
    * @returns true if the ID is already in use, false otherwise.
    */
 
-  inUse(id: string): boolean {
+  inUse<BRANDED_ID_TYPE extends string>(id: BRANDED_ID_TYPE): boolean {
     return this.IDS.has(id);
   }
 }
