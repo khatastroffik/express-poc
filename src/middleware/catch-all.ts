@@ -18,8 +18,8 @@ export function catchAll(err: Error, req: Request, res: Response, next: NextFunc
     log.debug(`[HEADERS ALREADY SENT] ${logMessage}`);
     return next(err);
   }
-  log.error(logMessage);
-  const statusCode = status.INTERNAL_SERVER_ERROR;
+  log.debug(logMessage);
+  const statusCode = err instanceof HTTPError ? err.statuscode : status.INTERNAL_SERVER_ERROR;
   const message = err.message || status[statusCode];
   res.status(statusCode).json({ status: "error", statusCode, message });
 };
