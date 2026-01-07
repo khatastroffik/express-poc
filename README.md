@@ -26,6 +26,9 @@ This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup inclu
 
 see the **[Project Kanban Board](https://github.com/users/khatastroffik/projects/3)** for the current state of development
 
+> &#9888; This PoC is using a transcient *in-memory* storage for demo/development purpose i.e. to reduce dependencies.
+> Please replace this storage with a persisting (database etc.) storage for production. &#9888;
+
 ## Setup
 
 ### Prerequisits

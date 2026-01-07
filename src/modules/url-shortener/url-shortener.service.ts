@@ -3,6 +3,11 @@ import { NotFoundError } from "../../lib/errors";
 import IDService from "./../../lib/id-service";
 
 class UrlShortenerService {
+  /**
+   * This is a "in-memory" storage for all the "shortened URLs".
+   *
+   * !!! REPLACE THIS TRANSIENT STORAGE WITH A PERSISTING ONE FOR PRODUCTION USE !!!
+   */
   private readonly storage: Map<UrlId, string> = new Map<UrlId, string>();
 
   constructor() {
