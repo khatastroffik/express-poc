@@ -24,6 +24,8 @@ This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup inclu
 - [ ] example endpoint structure showing usage of routing, controller, data transfer object, validation and data access service
 - [ ] OpenAPI (Swagger) endpoints documentation
 
+see the **[Project Kanban Board](https://github.com/users/khatastroffik/projects/3)** for the current state of development
+
 ## Setup
 
 ### Prerequisits

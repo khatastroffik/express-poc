@@ -7,7 +7,7 @@ const MAX_UNIT_INDEX = DIGITAL_DATA_SIZE_UNITS.length - 1;
  * @param digitalDataSize the digital data size value  in bytes.
  * @param precision the precision of the output representation.
  * @param addSpace add a space between the formated value and the unit of measure.
- * @returns
+ * @returns formated digital data size with units dynamically set.
  */
 export function prettyBytes(digitalDataSize: number, precision: number = 3, addSpace = true): string {
   const space = addSpace ? " " : "";

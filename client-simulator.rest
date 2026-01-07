@@ -12,6 +12,10 @@
 @host = {{hostname}}:{{port}}
 @contentType = application/json
 
+// =======================================================
+// # DEMO ENDPOINTS                                      #
+// =======================================================
+
 ### Simple Endpoint
 GET {{host}}
 
@@ -28,3 +32,22 @@ GET {{host}}/simulations/exception
 
 ### Simulate server "catch-all" for unhandled rejection [TERMINATING SERVER PROCESS]
 GET {{host}}/simulations/rejection
+
+
+// =======================================================
+// # URL-SHORTENER ENDPOINT                              #
+// =======================================================
+
+### URL-Shortener - GetAll
+GET {{host}}/shortener
+
+### URL-Shortener - GetOne
+GET {{host}}/shortener/1lbIMh
+
+### URL-Shortener - Create
+POST {{host}}/shortener
+Content-Type: application/json
+
+{
+  "url": "https://github.com/khatastroffik"
+}
