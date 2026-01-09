@@ -21,7 +21,8 @@ This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup inclu
   - [x] ready-to-use error classes mapping specific HTTP errors/status
 - [x] simulation endpoints to showcase logging, catching errors and handling uncaught exceptions &amp; rejections
 - [x] client-simulator (using the VSCode [*REST Client*](https://github.com/Huachao/vscode-restclient.git)&#11127; extension)
-- [x] example endpoint **"URL-Shortener"** structure showing usage of routing, controller, data transfer object, validation and data access service
+- [x] example endpoint **"URL-Shortener"** structure showing usage of routing, controller, data transfer object, validation and data access
+- [x] test the enpoints with jest
 - [ ] OpenAPI (Swagger) endpoints documentation
 
 see the **[Project Kanban Board](https://github.com/users/khatastroffik/projects/3)** for the current state of development
