@@ -15,7 +15,7 @@ export function simpleEndpoint(req: Request, res: Response, next: NextFunction) 
       title: "This is a **khatastroffik service** Proof-of-Concept!",
       hello: "Bonjour!",
       requestUrl: `${base}${req.url}`,
-      currentTime: `${new Date().toUTCString()}`,
+      currentTime: `${new Date().toISOString()}`,
     });
   }
   catch (err) {
