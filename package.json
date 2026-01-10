@@ -2,6 +2,12 @@
   "name": "express-poc",
   "version": "1.0.0",
   "packageManager": "pnpm@10.28.0",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.28.0"
+    }
+  },
   "description": "(Proof-of-Concept) An API node.js service template written in TypeScript.",
   "author": "khatastroffik",
   "license": "MIT",
