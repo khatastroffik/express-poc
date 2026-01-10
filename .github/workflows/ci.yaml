@@ -21,6 +21,9 @@ jobs:
       matrix:
         # test with the last 2 Node.js LTS versions
         node-version: [22.x, 24.x]
+    permissions:
+      # allow dependency-review action to write summary to the PR
+      pull-requests: write
 
     steps:
 
@@ -32,8 +35,9 @@ jobs:
 
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
-        # Commonly enabled options, see https://github.com/actions/dependency-review-action#configuration-options for all available options.
+
         with:
+          # Commonly enabled options, see https://github.com/actions/dependency-review-action#configuration-options for all available options.
           comment-summary-in-pr: always
           base-ref: ${{ github.event.pull_request.base.sha || 'main' }}
           head-ref: ${{ github.event.pull_request.head.sha || github.ref }}
