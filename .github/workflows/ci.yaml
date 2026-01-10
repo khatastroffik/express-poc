@@ -26,11 +26,9 @@ jobs:
 
       - name: Checkout changes
         uses: actions/checkout@v6
-
+                  
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
