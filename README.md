@@ -23,6 +23,7 @@ This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup inclu
 - [x] client-simulator (using the VSCode [*REST Client*](https://github.com/Huachao/vscode-restclient.git)&#11127; extension)
 - [x] example endpoint **"URL-Shortener"** structure showing usage of routing, controller, data transfer object, validation and data access
 - [x] test the enpoints with jest
+- [x] GitHub CI action: build and test the service/server prior merging pull requests to the main branch
 - [ ] OpenAPI (Swagger) endpoints documentation
 
 see the **[Project Kanban Board](https://github.com/users/khatastroffik/projects/3)** for the current state of development

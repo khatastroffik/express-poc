@@ -2,9 +2,11 @@ const { createDefaultPreset } = require("ts-jest");
 
 const tsJestTransformCfg = createDefaultPreset().transform;
 
+const isCI = require("node:process").env.CI;
+
 /** @type {import("jest").Config} **/
 module.exports = {
-  verbose: true,
+  verbose: !isCI,
   preset: "ts-jest/presets/js-with-ts",
   testEnvironment: "node",
   transform: {

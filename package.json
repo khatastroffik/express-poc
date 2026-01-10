@@ -1,7 +1,13 @@
 {
   "name": "express-poc",
   "version": "1.0.0",
-  "packageManager": "pnpm@10.27.0",
+  "packageManager": "pnpm@10.28.0",
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "10.28.0"
+    }
+  },
   "description": "(Proof-of-Concept) An API node.js service template written in TypeScript.",
   "author": "khatastroffik",
   "license": "MIT",
@@ -16,13 +22,13 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "test": "jest --passWithNoTests",
+    "test": "jest --passWithNoTests && echo 'Testing completed'",
     "prepare": "husky",
-    "lint": "eslint .",
-    "lintix": "eslint . --fix",
+    "lint": "eslint . && echo 'Linting completed'",
+    "lintix": "eslint . --fix && echo 'Linting & Fixing completed'",
     "dev": "tsx watch ./src/index.ts",
-    "typecheck": "tsc --noEmit",
-    "build": "rimraf ./dist && tsc",
+    "typecheck": "tsc --noEmit && echo 'Typechecking completed'",
+    "build": "rimraf ./dist && tsc && echo 'Building completed'",
     "start": "node dist/index.js",
     "postpublish": "git push --tags",
     "try-commit": "git hook run pre-commit"
