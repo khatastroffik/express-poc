@@ -24,9 +24,10 @@ This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup inclu
 - [x] example endpoint **"URL-Shortener"** structure showing usage of routing, controller, data transfer object, validation and data access
 - [x] test the enpoints with jest
 - [x] GitHub CI action: build and test the service/server prior merging pull requests to the main branch
+- [ ] !["in-progress" badge](https://img.shields.io/badge/in--progress-grey?style=flat) *strict* or *loose* validation of (incomming) requests payloads with automatic type casting to corresponding endpoint DTOs according to pre-defined [Zod](https://zod.dev/) schemas: `req.body`, `req.params`, `req.query` and `req.headers`
 - [ ] OpenAPI (Swagger) endpoints documentation
 
-see the **[Project Kanban Board](https://github.com/users/khatastroffik/projects/3)** for the current state of development
+see the [express-poc project Kanban board](https://github.com/users/khatastroffik/projects/3) for the current state of development
 
 > &#9888; This PoC is using a transcient *in-memory* storage for demo/development purpose i.e. to reduce dependencies.
 > Please replace this storage with a persisting (database etc.) storage for production. &#9888;
