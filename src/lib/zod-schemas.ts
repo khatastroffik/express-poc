@@ -8,3 +8,6 @@ const WAN = z.url({ protocol: /^https?$/, hostname: z.regexes.domain, error: "In
 
 export const LAN_OR_WAN = z.union([WAN, LAN], "Invalid input: expected an URL (protocol + LAN or WAN hostname/IP)");
 export const FILEEXT_LOG = z.stringFormat("LOG-FILE-NAME", /[^/]+\.log$/i, "Invalid input: log-file name must end with '.log'");
+
+// export const RequestParamId = z.string();
+export const RequestParamId = z.string().normalize().trim().length(6).nonempty().nonoptional();

@@ -1,9 +1,16 @@
+import z from "zod";
+import { LAN_OR_WAN, RequestParamId } from "../../lib/zod-schemas";
+
+/**
+ * Branding the UrlItem with the UrlId property
+ */
 declare const UrlIdBrand: unique symbol;
 
 /**
  * Domain types, interfaces and constants
  */
 export type UrlId = string & { [UrlIdBrand]: true };
+
 export interface UrlItem {
   id: UrlId;
   url: string;
@@ -24,3 +31,14 @@ export type UrlItemGetDTO = UrlItem;
 export type UrlItemSaveDAO = Omit<UrlItem, "id">;
 export type UrlItemRetrieveDAO = UrlItem;
 export type UrlItemDeleteDAO = Omit<UrlItem, "url">;
+
+/**
+ * Zod Request Validation Schemas - to be used with "zalidate(...)" function
+ */
+export const UrlItemRequestParamSchema = z.object({
+  id: RequestParamId,
+});
+
+export const UrlItemRequestBodySchema = z.object({
+  url: LAN_OR_WAN,
+});

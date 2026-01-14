@@ -1,4 +1,3 @@
-import { warn } from "node:console";
 import z, { ZodError } from "zod";
 import { validatePayloadWithZodSchema, valize, valizeLooze } from "./valize";
 
@@ -67,10 +66,8 @@ describe("validatePayloadWithZodSchema", () => {
 
   it("should throw due to loosely invalid payloads", () => {
     const payloads = Array.from (looselyInvalidPayload);
-    warn("loosely invalid");
     payloads.forEach((payload) => {
       // Act
-      warn(payload);
       const argument = { schema: TestSchema, errorMessage, payload };
       // Assert
       expect(() => validatePayloadWithZodSchema(argument)).toThrow(ZodError);
@@ -79,10 +76,8 @@ describe("validatePayloadWithZodSchema", () => {
 
   it("should throw due to strictly invalid payloads", () => {
     const payloads = Array.from (strictlyInvalidPayload);
-    warn("strictly invalid");
     payloads.forEach((payload) => {
       // Act
-      warn(payload);
       const argument = { schema: TestSchemaStrict, errorMessage, payload };
       // Assert
       expect(() => validatePayloadWithZodSchema(argument)).toThrow(ZodError);
