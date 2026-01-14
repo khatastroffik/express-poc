@@ -8,13 +8,14 @@ const isCI = require("node:process").env.CI;
 module.exports = {
   verbose: !isCI,
   preset: "ts-jest/presets/js-with-ts",
+  moduleFileExtensions: ["ts", "tsx", "js"],
   testEnvironment: "node",
   transform: {
     ...tsJestTransformCfg,
   },
   roots: ["<rootDir>/src/"],
   testMatch: ["**/?(*.)+(spec|test).?(ts)?"],
-
+  setupFilesAfterEnv: ["jest-extended/all"],
   transformIgnorePatterns: [
     // "node_modules/(?!dependency-to-be-ignored-by-transformation/.*)",
   ],
