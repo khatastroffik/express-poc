@@ -1,5 +1,5 @@
 import z from "zod";
-import { LAN_OR_WAN, RequestParamId } from "../../lib/zod-schemas";
+import { LAN_OR_WAN, QueryLimit, QueryPage, QuerySort, RequestParamId } from "../../lib/zod-schemas";
 
 /**
  * Branding the UrlItem with the UrlId property
@@ -53,3 +53,11 @@ export const UrlItemRequestHeadersSchema = z.object({
   "x-array": z.array(z.string()).default(["A", "B", "C"]),
   "x-list": z.string().default("A, B, C"),
 });
+
+export const UrlItemGetAllRequestQuerySchema = z.object({
+  sort: QuerySort,
+  page: QueryPage,
+  limit: QueryLimit,
+});
+
+export type UrlItemGetAllRequestQuery = z.infer<typeof UrlItemGetAllRequestQuerySchema>;

@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import type { UrlId } from "./url-shortener.domain";
+import type { UrlId, UrlItemGetAllRequestQuery } from "./url-shortener.domain";
 import status from "http-status";
 import UrlShortenerService from "./url-shortener.service";
 
@@ -10,8 +10,10 @@ class UrlShortenerController {
     this.create = this.create.bind(this);
   }
 
-  async getAll(_req: Request, res: Response, next: NextFunction): Promise<void> {
+  async getAll(_req: Request<never, never, any, UrlItemGetAllRequestQuery>, res: Response, next: NextFunction): Promise<void> {
     try {
+      // Note: "req.query" is fully typed according to "UrlItemGetAllRequestQuerySchema"
+      // i.e. according to the schema used in the query schema used in the "zalidate" router middleware.
       const list = await UrlShortenerService.retrieveAll();
       res.json(list);
     }

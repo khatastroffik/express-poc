@@ -92,9 +92,36 @@ describe("URL-Shortener endpoint", () => {
     // Arrange
     const expectedResponseStatus = httpStatus.OK;
     // Act
-    const { body } = await request(app).get(BasePath).expect(expectedResponseStatus);
+    const { body } = await request(app).get(BasePath).expect(expectedResponseStatus); // WITHOUT QUERY PARAMS
     // Assert
     expect(body).toBeArrayOfSize(0);
+  });
+
+  it(`GET '${BasePath}' should validate query parameters`, async () => {
+    // Arrange
+    const expectedResponseStatus = httpStatus.OK;
+    // Act
+    const { body } = await request(app).get(`${BasePath}?sort=desc&page=3&limit=50`).expect(expectedResponseStatus); // WITH VALID QUERY PARAMS
+    // Assert
+    expect(body).toBeArrayOfSize(0);
+  });
+
+  it(`GET '${BasePath}' should respond with '400: Bad Request' when the query parameters are not valid`, async () => {
+    // Arrange
+    const expectedErrorMessage_Invalid_sort = "Invalid 'sort' query option: expected one of 'asc' or 'desc'";
+    const expectedErrorMessage_Invalid_limit = "Invalid 'limit' query option: expected one of '10', '25', '50' or '100'";
+    const expectedErrorStatusCode = httpStatus.BAD_REQUEST;
+    // Act
+    const { body } = await request(app).get(`${BasePath}?sort=unsorted&page=3&limit=22`).expect(expectedErrorStatusCode); // WITH INVALID QUERY PARAMS
+    // Assert
+    expect.assertions(6);
+    expect(body).not.toBeEmptyObject();
+    expect(body).toContainKeys(["message", "statusCode", "status"]);
+    expect(body.status).toEqual("error");
+    expect(body.statusCode).toEqual(expectedErrorStatusCode);
+    const messages = JSON.parse(body.message);
+    expect(messages[0].message).toEqual(expectedErrorMessage_Invalid_sort);
+    expect(messages[1].message).toEqual(expectedErrorMessage_Invalid_limit);
   });
 
   it(`GET '${BasePath}/:id' should validate a well formed Request parameter`, async () => {
