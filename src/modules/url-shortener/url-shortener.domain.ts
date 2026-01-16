@@ -42,3 +42,14 @@ export const UrlItemRequestParamSchema = z.object({
 export const UrlItemRequestBodySchema = z.object({
   url: LAN_OR_WAN,
 });
+
+export const UrlItemRequestHeadersSchema = z.object({
+  // for DEMO purpose
+  "accept-encoding": z.string(),
+  "authorization": z.string().default("none"),
+  "x-one-of-a-kind": z.string().default("khatastroffik API client"),
+  "x-special": z.boolean().default(true),
+  "x-timestamp": z.date().default(new Date()),
+  "x-array": z.array(z.string()).default(["A", "B", "C"]),
+  "x-list": z.string().default("A, B, C"),
+});

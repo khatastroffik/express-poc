@@ -34,15 +34,15 @@ const ZodUnrecognizedKeysErrorMessageHandler = { error: (issue: any) => {
 /********************************************************
  * valizeLoose
 *******************************************************/
-export function valizeLooze<T extends z.ZodObject>(payload: unknown /* z.input<T> */, schema: T): z.output<T> {
+export function valizeLooze<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA): z.output<SCHEMA> {
   const result = schema.parse(payload, ZodUnrecognizedKeysErrorMessageHandler);
-  return result as unknown as z.output<T>;
+  return result as unknown as z.output<SCHEMA>;
 }
 
 /********************************************************
  * valize
  *******************************************************/
-export function valize<T extends z.ZodObject>(payload: unknown /* z.input<T> */, schema: T): z.output<T> {
+export function valize<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA): z.output<SCHEMA> {
   const result = schema.strict().parse(payload, ZodUnrecognizedKeysErrorMessageHandler);
-  return result as unknown as z.output<T>;
+  return result as unknown as z.output<SCHEMA>;
 }

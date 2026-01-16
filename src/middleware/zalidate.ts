@@ -2,20 +2,20 @@ import type { NextFunction, Request, Response } from "express";
 import type { z } from "zod";
 import { ZodError } from "zod";
 import { BadRequestError } from "../lib/errors";
-import { valize } from "../lib/valize";
+import { valize, valizeLooze } from "../lib/valize";
 
 export interface zalidateArgs {
-  paramSchema?: z.ZodObject;
+  paramsSchema?: z.ZodObject;
   bodySchema?: z.ZodObject;
   querySchema?: z.ZodObject;
   headersSchema?: z.ZodObject;
 }
 
 export function zalidate(schemas: zalidateArgs) {
-  return async (req: Request<unknown, unknown, unknown, unknown>, _res: Response, next: NextFunction) => {
+  return async (req: Request<any, never, any, any>, _res: Response, next: NextFunction): Promise<void> => {
     try {
-      if (schemas.paramSchema) {
-        const validParams = valize(req.params, schemas.paramSchema);
+      if (schemas.paramsSchema) {
+        const validParams = valize(req.params, schemas.paramsSchema);
         req.params = validParams;
       }
       if (schemas.bodySchema) {
@@ -26,11 +26,10 @@ export function zalidate(schemas: zalidateArgs) {
         const validQuery = valize(req.query, schemas.querySchema);
         req.query = validQuery;
       }
-      // if (schemas.headersSchema) {
-      //   const validHeaders = valize(req.headers, schemas.headersSchema);
-      //   req.headers = validHeaders;
-      // }
-
+      if (schemas.headersSchema) {
+        const validHeaders = valizeLooze(req.headers, schemas.headersSchema); // DO NOT VALIDATE !! STRICTLY !!
+        req.headers = { ...req.headers, ...validHeaders as any }; // merge incomming headers with validated headers
+      }
       return next();
     }
     catch (err) {
@@ -43,3 +42,5 @@ export function zalidate(schemas: zalidateArgs) {
     }
   };
 };
+
+// see also https://nicnocquee.github.io/zod-request/

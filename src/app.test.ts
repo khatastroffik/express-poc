@@ -16,6 +16,7 @@ afterAll(() => {
 
 describe("initial test", () => {
   it("should always pass", () => {
+    expect.assertions(1);
     expect(true).toBeTruthy();
   });
 });
@@ -28,6 +29,7 @@ describe("app DEMO endpoint", () => {
     // Act
     const { body } = await request(app).get(testUri).expect(expectedResponseStatus);
     // Assert
+    expect.assertions(6);
     expect(body).not.toBeEmptyObject();
     expect(body).toContainAllKeys(["title", "currentTime", "hello", "requestUrl"]);
     expect(body.title).toEqual("This is a **khatastroffik service** Proof-of-Concept!");
@@ -42,6 +44,7 @@ describe("app DEMO endpoint", () => {
     // Act
     const { body } = await request(app).get(testUri).expect(httpStatus.OK);
     // Assert
+    expect.assertions(5);
     expect(body).not.toBeEmptyObject();
     expect(body.NODE_DEV).toBeBoolean();
     expect(body.NODE_DEV).toBeFalse();
@@ -116,6 +119,7 @@ describe("URL-Shortener endpoint", () => {
     // Act
     const { body } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
     // Assert
+    expect.assertions(5);
     expect(body).not.toBeEmptyObject();
     expect(body).toContainKeys(["message", "statusCode", "status"]);
     expect(body.status).toEqual("error");
@@ -131,6 +135,7 @@ describe("URL-Shortener endpoint", () => {
     // Act
     const { body } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
     // Assert
+    expect.assertions(5);
     expect(body).not.toBeEmptyObject();
     expect(body).toContainKeys(["message", "statusCode", "status"]);
     expect(body.status).toEqual("error");
