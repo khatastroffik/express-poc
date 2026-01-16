@@ -3,6 +3,7 @@
     "humao.rest-client",
     "mikestead.dotenv",
     "dbaeumer.vscode-eslint",
-    "github.vscode-github-actions"
+    "github.vscode-github-actions",
+    "orta.vscode-jest"
   ]
 }
