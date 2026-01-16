@@ -24,7 +24,7 @@ const EnvironmentInput = z.object({
  * the express server application.
  * It is adapted from the EnvironmentInput schema to enhance the env information.
  */
-const Environment = EnvironmentInput
+const EnvironmentSchema = EnvironmentInput
   .transform(schema => ({
     ...EnvironmentInput.omit({ NODE_ENV: true }).parse(schema),
     NODE_DEV: schema.NODE_ENV === "development",
@@ -40,7 +40,7 @@ const Environment = EnvironmentInput
  * @returns The parsed and validated Environment data as used within the app or NEVER in case of a failed validation.
  */
 function parseEnv(): Environment | never {
-  const parseResult = Environment.safeParse(/* eslint-disable node/prefer-global/process */ process.env /* eslint-enable node/prefer-global/process */);
+  const parseResult = EnvironmentSchema.safeParse(/* eslint-disable node/prefer-global/process */ process.env /* eslint-enable node/prefer-global/process */);
   if (!parseResult.success) {
     parseResult.error.issues.forEach(issue => console.error(`[Environment.${issue.path}] ${issue.message}`));
     exit(1);
@@ -57,7 +57,7 @@ function parseEnv(): Environment | never {
 /**
  * The type of the enhanced environment information
  */
-export type Environment = z.infer<typeof Environment>;
+export type Environment = z.infer<typeof EnvironmentSchema>;
 
 /**
  * The enhanced environment information made available to the application
