@@ -16,35 +16,36 @@ afterAll(() => {
 
 describe("initial test", () => {
   it("should always pass", () => {
-    expect.assertions(1);
+    expect.assertions(2);
     expect(true).toBeTruthy();
+    expect(6).not.toBe(5);
   });
 });
 
 describe("app DEMO endpoint", () => {
   it("GET '/' should respond correctly", async () => {
+    expect.assertions(6);
     // Arrange
     const testUri = "/";
     const expectedResponseStatus = httpStatus.OK;
     // Act
     const { body } = await request(app).get(testUri).expect(expectedResponseStatus);
     // Assert
-    expect.assertions(6);
     expect(body).not.toBeEmptyObject();
     expect(body).toContainAllKeys(["title", "currentTime", "hello", "requestUrl"]);
-    expect(body.title).toEqual("This is a **khatastroffik service** Proof-of-Concept!");
+    expect(body.title).toBe("This is a **khatastroffik service** Proof-of-Concept!");
     expect(body.currentTime).toBeDateString();
     expect(new Date(body.currentTime)).toBeValidDate();
     expect(body.requestUrl).toStartWith("http");
   });
 
   it("GET '/environment' should respond correctly", async () => {
+    expect.assertions(5);
     // Arrange
     const testUri = "/environment";
     // Act
     const { body } = await request(app).get(testUri).expect(httpStatus.OK);
     // Assert
-    expect.assertions(5);
     expect(body).not.toBeEmptyObject();
     expect(body.NODE_DEV).toBeBoolean();
     expect(body.NODE_DEV).toBeFalse();
@@ -53,6 +54,7 @@ describe("app DEMO endpoint", () => {
   });
 
   it("GET '/simulateErrorLogs' should respond correctly", async () => {
+    expect.assertions(2);
     // Arrange
     const testUri = "/simulateErrorLogs";
     const expectedErrorStatusCode = httpStatus.NOT_FOUND;
@@ -64,6 +66,7 @@ describe("app DEMO endpoint", () => {
   });
 
   it("GET '/simulateException' should respond correctly", async () => {
+    expect.assertions(2);
     // Arrange
     const testUri = "/simulateException";
     const expectedErrorStatusCode = httpStatus.NOT_FOUND;
@@ -73,7 +76,9 @@ describe("app DEMO endpoint", () => {
     expect(body).toBeEmptyObject();
     expect(clientError).toBeTrue();
   });
+
   it("GET '/simulateRejection' should respond correctly", async () => {
+    expect.assertions(2);
     // Arrange
     const testUri = "/simulateRejection";
     const expectedErrorStatusCode = httpStatus.NOT_FOUND;
@@ -84,11 +89,13 @@ describe("app DEMO endpoint", () => {
     expect(clientError).toBeTrue();
   });
 });
+
 describe("URL-Shortener endpoint", () => {
   // Arrange
   const BasePath = urlShortener.BasePath;
 
   it(`GET '${BasePath}' should respond with a list of url-items in the body`, async () => {
+    expect.assertions(1);
     // Arrange
     const expectedResponseStatus = httpStatus.OK;
     // Act
@@ -98,6 +105,7 @@ describe("URL-Shortener endpoint", () => {
   });
 
   it(`GET '${BasePath}' should validate query parameters`, async () => {
+    expect.assertions(1);
     // Arrange
     const expectedResponseStatus = httpStatus.OK;
     // Act
@@ -107,6 +115,7 @@ describe("URL-Shortener endpoint", () => {
   });
 
   it(`GET '${BasePath}' should respond with '400: Bad Request' when the query parameters are not valid`, async () => {
+    expect.assertions(6);
     // Arrange
     const expectedErrorMessage_Invalid_sort = "Invalid 'sort' query option: expected one of 'asc' or 'desc'";
     const expectedErrorMessage_Invalid_limit = "Invalid 'limit' query option: expected one of '10', '25', '50' or '100'";
@@ -114,10 +123,9 @@ describe("URL-Shortener endpoint", () => {
     // Act
     const { body } = await request(app).get(`${BasePath}?sort=unsorted&page=3&limit=22`).expect(expectedErrorStatusCode); // WITH INVALID QUERY PARAMS
     // Assert
-    expect.assertions(6);
     expect(body).not.toBeEmptyObject();
     expect(body).toContainKeys(["message", "statusCode", "status"]);
-    expect(body.status).toEqual("error");
+    expect(body.status).toBe("error");
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
     const messages = JSON.parse(body.message);
     expect(messages[0].message).toEqual(expectedErrorMessage_Invalid_sort);
@@ -125,6 +133,7 @@ describe("URL-Shortener endpoint", () => {
   });
 
   it(`GET '${BasePath}/:id' should validate a well formed Request parameter`, async () => {
+    expect.assertions(4);
     // Arrange
     const testParameter = "abcdef"; // 6 chars, non existing url-item
     const expectedStatusCode = httpStatus.NOT_FOUND;
@@ -139,6 +148,7 @@ describe("URL-Shortener endpoint", () => {
   });
 
   it(`GET '${BasePath}/:id' should respond with '400: Bad Request' when the Id parameter is not well formed e.g. is too long`, async () => {
+    expect.assertions(5);
     // Arrange
     const testParameter = "not-well-formed-id-parameter"; // > 6 chars
     const expectedErrorMessage = "Too big: expected string to have <=6 characters";
@@ -146,15 +156,15 @@ describe("URL-Shortener endpoint", () => {
     // Act
     const { body } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
     // Assert
-    expect.assertions(5);
     expect(body).not.toBeEmptyObject();
     expect(body).toContainKeys(["message", "statusCode", "status"]);
-    expect(body.status).toEqual("error");
+    expect(body.status).toBe("error");
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
     expect(JSON.parse(body.message)[0].message).toEqual(expectedErrorMessage);
   });
 
   it(`GET '${BasePath}/:id' should respond with '400: Bad Request' when the Id parameter is not well formed e.g. is not long enough`, async () => {
+    expect.assertions(5);
     // Arrange
     const testParameter = "bad"; // < 6 chars
     const expectedErrorMessage = "Too small: expected string to have >=6 characters";
@@ -162,15 +172,15 @@ describe("URL-Shortener endpoint", () => {
     // Act
     const { body } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
     // Assert
-    expect.assertions(5);
     expect(body).not.toBeEmptyObject();
     expect(body).toContainKeys(["message", "statusCode", "status"]);
-    expect(body.status).toEqual("error");
+    expect(body.status).toBe("error");
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
     expect(JSON.parse(body.message)[0].message).toEqual(expectedErrorMessage);
   });
 
   it(`POST '${BasePath}' should respond correctly`, async () => {
+    expect.assertions(4);
     // Arrange
     const payload = { url: "http://github.com/khatastroffik/express-poc" };
     // Act
@@ -183,11 +193,12 @@ describe("URL-Shortener endpoint", () => {
     // Assert
     expect(body).not.toBeEmptyObject();
     expect(body).toContainKeys(["id", "url"]);
-    expect(body.id.length).toEqual(6);
+    expect(body.id).toHaveLength(6);
     expect(body.url).toBe(payload.url);
   });
 
   it(`POST '${BasePath}' should accept non encoded chars in the url path`, async () => {
+    expect.assertions(4);
     // Arrange
     const payload = { url: "https://en.wikipedia.org/wiki/Möbius_strip" };
     // Act
@@ -200,11 +211,12 @@ describe("URL-Shortener endpoint", () => {
     // Assert
     expect(body).not.toBeEmptyObject();
     expect(body).toContainKeys(["id", "url"]);
-    expect(body.id.length).toEqual(6);
+    expect(body.id).toHaveLength(6);
     expect(body.url).toBe(payload.url);
   });
 
   it(`POST '${BasePath}' should accept encoded chars in the url path`, async () => {
+    expect.assertions(4);
     // Arrange
     const payload = { url: "https://en.wikipedia.org/wiki/M%C3%B6bius_strip" };
     // Act
@@ -217,11 +229,12 @@ describe("URL-Shortener endpoint", () => {
     // Assert
     expect(body).not.toBeEmptyObject();
     expect(body).toContainKeys(["id", "url"]);
-    expect(body.id.length).toEqual(6);
+    expect(body.id).toHaveLength(6);
     expect(body.url).toBe(payload.url);
   });
 
   it(`POST '${BasePath}' should respond with '400: Bad Request' when the (wan or lan) url is not valid`, async () => {
+    expect.assertions(3);
     // Arrange
     const payload = { url: "github.com/khatastroffik/express-poc" }; // missing protocol
     const expectedErrorMessage = "Invalid input: expected an URL (protocol + LAN or WAN hostname/IP)";
@@ -239,6 +252,8 @@ describe("URL-Shortener endpoint", () => {
   });
 
   it(`POST '${BasePath}' should respond with '400: Bad Request' when the (wan or lan) url is missing`, async () => {
+    expect.assertions(3);
+    // Arrange
     const payload = {}; // missing url
     const expectedErrorMessage = "Invalid input: expected an URL (protocol + LAN or WAN hostname/IP)";
     // Act
@@ -255,6 +270,8 @@ describe("URL-Shortener endpoint", () => {
   });
 
   it(`POST '${BasePath}' should respond with '400: Bad Request' when the body contains unexpected, additional properties`, async () => {
+    expect.assertions(3);
+    // Arrange
     const payload = { url: "github.com/khatastroffik/express-poc", foo: "bar" }; // unexpected property
     const expectedErrorMessage = "Invalid input: expected an URL (protocol + LAN or WAN hostname/IP)";
     // Act

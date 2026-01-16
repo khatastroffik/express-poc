@@ -20,13 +20,13 @@ describe("logger", () => {
   const infoSpy = jest.spyOn(loggerSingletonFunction(), "info");
 
   it("should have been created with transports for Console+File and with exceptions and rejections handlers", () => {
-    expect(createLoggerSpy).toHaveBeenCalledTimes(1);
+    expect(createLoggerSpy).toHaveBeenCalledOnce();
     const transports = loggerSingletonFunction().transports as winston.transport[];
     const standardLogFile = basename(env.LOG_FILE); // path.join(dirname(env.LOG_FILE), "unhandled-exceptions.log");
     const exceptionsLogFile = "unhandled-exceptions.log";
     const rejectionsLogFile = "unhandled-rejections.log";
 
-    expect(transports.length).toBe(4);
+    expect(transports).toHaveLength(4);
     // Console-Log
     expect(transports[0] instanceof winston.transports.Console).toBeTruthy();
     // File-Log

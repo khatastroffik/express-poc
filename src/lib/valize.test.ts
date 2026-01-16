@@ -65,6 +65,7 @@ describe("validatePayloadWithZodSchema", () => {
   });
 
   it("should throw due to loosely invalid payloads", () => {
+    // Arrange
     const payloads = Array.from (looselyInvalidPayload);
     payloads.forEach((payload) => {
       // Act
@@ -75,6 +76,7 @@ describe("validatePayloadWithZodSchema", () => {
   });
 
   it("should throw due to strictly invalid payloads", () => {
+    // Arrange
     const payloads = Array.from (strictlyInvalidPayload);
     payloads.forEach((payload) => {
       // Act
@@ -112,6 +114,7 @@ describe("valize", () => {
   });
 
   it("should throw due to loosely invalid payloads", () => {
+    // Arrange
     const payloads = Array.from (looselyInvalidPayload);
     payloads.forEach((payload) => {
       // Act & Assert
@@ -120,6 +123,7 @@ describe("valize", () => {
   });
 
   it("should throw due to strictly invalid payloads", () => {
+    // Arrange
     const payloads = Array.from (strictlyInvalidPayload);
     payloads.forEach((payload) => {
       // Act & Assert
@@ -146,6 +150,7 @@ describe("valizeStrict", () => {
   });
 
   it("should throw due to strictly invalid payloads", () => {
+    // Arrange
     const payloads = Array.from (strictlyInvalidPayload);
     payloads.forEach((payload) => {
       // Act & Assert
@@ -153,5 +158,3 @@ describe("valizeStrict", () => {
     });
   });
 });
-
-// valizeStrict(inputObject, valizeStrictTestSchema);
