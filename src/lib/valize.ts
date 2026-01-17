@@ -46,3 +46,19 @@ export function valize<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA)
   const result = schema.strict().parse(payload, ZodUnrecognizedKeysErrorMessageHandler);
   return result as unknown as z.output<SCHEMA>;
 }
+
+/********************************************************
+ * valizeLoose Async
+*******************************************************/
+export async function valizeLoozeAsync<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA): Promise<z.output<SCHEMA>> {
+  const result = await schema.parseAsync(payload, ZodUnrecognizedKeysErrorMessageHandler);
+  return result as unknown as z.output<SCHEMA>;
+}
+
+/********************************************************
+ * valize Async
+ *******************************************************/
+export async function valizeAsync<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA): Promise<z.output<SCHEMA>> {
+  const result = await schema.strict().parseAsync(payload, ZodUnrecognizedKeysErrorMessageHandler);
+  return result as unknown as z.output<SCHEMA>;
+}
