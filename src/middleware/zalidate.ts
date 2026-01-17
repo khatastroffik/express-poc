@@ -3,7 +3,7 @@ import type { NextFunction, Request, Response } from "express";
 import type { z } from "zod";
 import { ZodError } from "zod";
 import { BadRequestError } from "../lib/errors";
-import { valize, valizeLooze } from "../lib/valize";
+import { valize, valizeAsync, valizeLooze, valizeLoozeAsync } from "../lib/valize";
 
 export interface zalidateArgs {
   paramsSchema?: z.ZodObject;
@@ -13,18 +13,21 @@ export interface zalidateArgs {
 }
 
 /**
- * Middleware used to parse, validate and typecast an express
+ * Synchronous middleware used to parse, validate and typecast an express
  * Request (params, body, headers, query) as defined by Zod-Schemas.
+ * @description
+ * Use the synchronous middleware for schemas that do NOT require asynchronous
+ * parsing e.g. when validation/transformation do rely on synchronous processes only.
  * @param schemas pre-defined (optional) schemas used to parse,
  *                validate and typecast the request url-path parameters,
  *                body, headers and query-parameters.
- * @returns an asynchronous express-middleware function.
+ * @returns a synchronous express-middleware function.
  * @throws a client "400: Bad-Request" error (containg ZodError details)
  *         is thrown i.e. forwarded whenever the request is not fulfilling
  *         one of the provided zod-schema. Other errors are thrown as-is.
  */
 export function zalidate(schemas: zalidateArgs) {
-  return async (req: Request<any, never, any, any>, _res: Response, next: NextFunction): Promise<void> => {
+  return (req: Request<any, never, any, any>, _res: Response, next: NextFunction): void => {
     try {
       if (schemas.paramsSchema) {
         req.params = valize(req.params, schemas.paramsSchema);
@@ -40,6 +43,52 @@ export function zalidate(schemas: zalidateArgs) {
       if (schemas.headersSchema) {
         // !! DO NOT VALIDATE STRICTLY TO NOT THROW ON RECEIVED HEADERS NOT DEFINED IN THE SCHEMA !!
         const validHeaders = valizeLooze(req.headers, schemas.headersSchema);
+        req.headers = { ...req.headers, ...validHeaders as any };
+      }
+      return next();
+    }
+    catch (err) {
+      if (err instanceof ZodError) {
+        return next(new BadRequestError(err.message));
+      }
+      else {
+        return next(err);
+      }
+    }
+  };
+};
+
+/**
+ * Asynchronous middleware used to parse, validate and typecast an express
+ * Request (params, body, headers, query) as defined by Zod-Schemas.
+ * @description
+ * Use the asynchronous middleware for schemas that do require
+ * asynchronous parsing e.g. when async fetching data for validation purpose.
+ * @param schemas pre-defined (optional) schemas used to parse,
+ *                validate and typecast the request url-path parameters,
+ *                body, headers and query-parameters.
+ * @returns an asynchronous express-middleware function.
+ * @throws a client "400: Bad-Request" error (containg ZodError details)
+ *         is thrown i.e. forwarded whenever the request is not fulfilling
+ *         one of the provided zod-schema. Other errors are thrown as-is.
+ */
+export function zalidateAsync(schemas: zalidateArgs) {
+  return async (req: Request<any, never, any, any>, _res: Response, next: NextFunction): Promise<void> => {
+    try {
+      if (schemas.paramsSchema) {
+        req.params = await valizeAsync(req.params, schemas.paramsSchema);
+      }
+      if (schemas.bodySchema) {
+        req.body = await valizeAsync(req.body, schemas.bodySchema);
+      }
+      if (schemas.querySchema) {
+        const validQuery = await valizeAsync(req.query, schemas.querySchema);
+        // OVERRIDE GETTER PROP WITH STANDARD OBJECT PROP DEFINITION TO ALLOW TYPCASTING OF REQ.QUERY
+        Object.defineProperty(req, "query", { configurable: false, writable: false, value: validQuery });
+      }
+      if (schemas.headersSchema) {
+        // !! DO NOT VALIDATE STRICTLY TO NOT THROW ON RECEIVED HEADERS NOT DEFINED IN THE SCHEMA !!
+        const validHeaders = await valizeLoozeAsync(req.headers, schemas.headersSchema);
         req.headers = { ...req.headers, ...validHeaders as any };
       }
       return next();
