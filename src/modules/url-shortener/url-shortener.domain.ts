@@ -1,5 +1,6 @@
+import type { ZodOpenApiOperationObject } from "zod-openapi";
 import z from "zod";
-import { LAN_OR_WAN, QueryLimit, QueryPage, QuerySort, RequestParamId } from "../../lib/zod-schemas";
+import { ClientErrorSchema, GetAllRequestQuerySchema, IdSchema, LAN_OR_WAN, QueryLimit, QueryPage, QuerySort, RequestParamId, ServerErrorSchema } from "../../lib/zod-schemas";
 
 /**
  * Branding the UrlItem with the UrlId property
@@ -54,10 +55,62 @@ export const UrlItemRequestHeadersSchema = z.object({
   "x-list": z.string().default("A, B, C"),
 });
 
-export const UrlItemGetAllRequestQuerySchema = z.object({
-  sort: QuerySort,
-  page: QueryPage,
-  limit: QueryLimit,
-});
-
+export const UrlItemGetAllRequestQuerySchema = GetAllRequestQuerySchema;
 export type UrlItemGetAllRequestQuery = z.infer<typeof UrlItemGetAllRequestQuerySchema>;
+
+export const UrlIdSchema = IdSchema.brand("UrlIdBrand").meta({ id: "UrlId", description: "the ID of an URL item. This ID can be safelly used as a **slug**." });
+
+export const UrlItemSchema = z.object({
+  id: UrlIdSchema.meta({ description: "ID of the item.", example: "testid" }),
+  url: LAN_OR_WAN.meta({ description: "url of the item.", example: "https://github.com/khatastroffik/express-poc" }),
+}).meta({ id: "UrlItem", description: "A url-item containing both the original url and its **slug** ID." });
+
+export const UrlItemsSchema = z.array(UrlItemSchema).meta({ id: "UrlItems", description: "A list of url-items." });
+
+export const getUrlItems: ZodOpenApiOperationObject = {
+  operationId: "getUrlItems",
+  summary: "List URL items",
+  description: "Lists all URL items in the database.",
+  tags: ["url-items"],
+  parameters: [QuerySort, QueryPage, QueryLimit],
+  responses: {
+    200: {
+      description: "The URL items were retrieved successfully.",
+      content: { "application/json": { schema: UrlItemsSchema },
+      },
+    },
+  },
+};
+
+export const getOneUrlItem: ZodOpenApiOperationObject = {
+  operationId: "getUrlItem",
+  summary: "Get an URL item",
+  description: "Gets a URL item from the database.",
+  tags: ["url-items"],
+  requestParams: {
+    path: z.object({ id: UrlIdSchema }),
+  },
+  responses: {
+    "200": {
+      description: "The URL item was retrieved successfully.",
+      content: { "application/json": { schema: UrlItemSchema },
+      },
+    },
+    "400": {
+      description: "Bad request",
+      content: { "application/json": { schema: ClientErrorSchema.meta({ example: "{ \"status\": \"error\", \"statuscode\": 400, \"message\": \"Bad Request\"}" }) },
+      },
+    },
+    "404": {
+      description: "Not Found",
+      content: { "application/json": { schema: ClientErrorSchema.meta({ example: "{ \"status\": \"error\", \"statuscode\": 404, \"message\": \"Not Found\"}" }) },
+      },
+    },
+    "5XX": {
+      description: "Server error",
+      content: { "application/json": { schema: ServerErrorSchema },
+      },
+    },
+
+  },
+};

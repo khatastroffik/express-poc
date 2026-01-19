@@ -4,7 +4,7 @@ An API node.js/express.js service template i.e. Proof-of-Concept written in Type
 
 This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup including the use of core libraries and tools like `typescript`, `tsx`, `jest`, `supertest`, `@antfu/eslint`, `husky`, `lint-staged`, `morgan`, `winston` and `zod` (see [Project](#project) below). It is not a "one-size-fits-all" solution, thus rather a suggestion for a smooth first express-js experience.
 
-![GitHub package.json version](https://img.shields.io/github/package-json/v/khatastroffik/express-poc?style=flat&labelColor=darkblue&color=black) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/khatastroffik/express-poc?style=flat&labelColor=darkblue&color=black) ![GitHub License](https://img.shields.io/github/license/khatastroffik/express-poc?style=flat&labelColor=darkblue&color=black) ![GitHub package.json prod dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/express?style=flat&labelColor=darkred&color=black) ![GitHub package.json prod dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/zod?style=flat&labelColor=darkred&color=black) ![GitHub package.json dev/peer/optional dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/dev/typescript?style=flat&labelColor=darkgreen&color=black) ![GitHub package.json dev/peer/optional dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/dev/eslint?style=flat&labelColor=darkgreen&color=black) ![GitHub package.json dev/peer/optional dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/dev/jest?style=flat&labelColor=darkgreen&color=black)
+![GitHub package.json version](https://img.shields.io/github/package-json/v/khatastroffik/express-poc?style=flat&labelColor=darkblue&color=black) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/khatastroffik/express-poc?style=flat&labelColor=darkblue&color=black) ![GitHub License](https://img.shields.io/github/license/khatastroffik/express-poc?style=flat&labelColor=darkblue&color=black) ![GitHub package.json prod dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/express?style=flat&labelColor=darkred&color=black) ![GitHub package.json prod dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/zod?style=flat&labelColor=darkred&color=black) ![OAS v3.1.1](https://img.shields.io/badge/OpenApi-v3.1.1-black?style=flat&labelColor=darkred) ![GitHub package.json dev/peer/optional dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/dev/typescript?style=flat&labelColor=darkgreen&color=black) ![GitHub package.json dev/peer/optional dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/dev/eslint?style=flat&labelColor=darkgreen&color=black) ![GitHub package.json dev/peer/optional dependency version](https://img.shields.io/github/package-json/dependency-version/khatastroffik/express-poc/dev/jest?style=flat&labelColor=darkgreen&color=black)
 
 ## Functionality
 
@@ -20,12 +20,15 @@ This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup inclu
   - [x] automatic catching/logging of unhandled exceptions and rejections
   - [x] ready-to-use error classes mapping specific HTTP errors/status
 - [x] simulation endpoints to showcase logging, catching errors and handling uncaught exceptions &amp; rejections
-- [x] client-simulator (using the VSCode [*REST Client*](https://github.com/Huachao/vscode-restclient.git)&#11127; extension)
-- [x] example endpoint **"URL-Shortener"** structure showing usage of routing, controller, data transfer object, validation and data access
-- [x] test the enpoints with jest
+- [x] client-simulator (using the VSCode [REST Client](https://github.com/Huachao/vscode-restclient.git)&#11127; extension)
+- [x] example endpoint structure ("url-shortener") demonstrating the usage of routing, controller, data transfer object, validation and data access
+- [x] CI compatible *endpoints tests*  with *jest* and *supertest*
 - [x] GitHub CI action: build and test the service/server prior merging pull requests to the main branch
 - [x] *synchronous* or *asynchronous* validation of (incomming) requests payloads with automatic typecasting according to pre-defined [Zod](https://zod.dev/) schemas: `req.body`, `req.params`, `req.query` and `req.headers`
-- [ ] OpenAPI (Swagger) endpoints documentation
+- [x] *OpenAPI v3.1.1* (Swagger) endpoints specification documents:
+  - [x] JSON Spec: `/swagger/openapi.json` (at runtime)
+  - [x] Yaml Spec: `/swagger/openapi.yaml` (at runtime)
+  - [x] Swagger-UI: `/swagger/` (at runtime) [&rarr; screenshot](./docs/express-poc%20-%20Swagger%20UI.png)
 
 > &#9888; This PoC is using a transcient *in-memory* storage for demo/development purpose i.e. to reduce dependencies.
 > Please replace this storage with a persisting (database etc.) storage for production. &#9888;
