@@ -14,6 +14,7 @@ class UrlShortenerService {
     this.retrieveAll = this.retrieveAll.bind(this);
     this.retrieveOne = this.retrieveOne.bind(this);
     this.save = this.save.bind(this);
+    this.storage.set("testid" as UrlId, "https://github.com/khatastroffik/express-poc");
   }
 
   async retrieveAll(): Promise<UrlItemRetrieveDAO[]> {

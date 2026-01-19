@@ -97,26 +97,30 @@ describe("URL-Shortener endpoint", () => {
   const BasePathAsync = `${BasePath}/async`;
 
   it(`GET '${BasePath}' and '${BasePathAsync}' should respond with a list of url-items in the body`, async () => {
-    expect.assertions(2);
+    expect.assertions(3);
     // Arrange
     const expectedResponseStatus = httpStatus.OK;
     // Act
     const { body } = await request(app).get(BasePath).expect(expectedResponseStatus); // WITHOUT QUERY PARAMS
     const { body: bodyAsync } = await request(app).get(BasePathAsync).expect(expectedResponseStatus); // WITHOUT QUERY PARAMS
     // Assert
-    expect(body).toBeArrayOfSize(0);
-    expect(bodyAsync).toBeArrayOfSize(0);
+    expect(body).toBeArrayOfSize(1);
+    expect(body[0].url).toBe("https://github.com/khatastroffik/express-poc");
+    expect(body).toEqual(bodyAsync);
   });
 
   it(`GET '${BasePath}' and '${BasePathAsync}' should validate query parameters`, async () => {
-    expect.assertions(2);
+    expect.assertions(4);
     // Arrange
     const expectedResponseStatus = httpStatus.OK;
+    const expectedResponseBody = { id: "testid", url: "https://github.com/khatastroffik/express-poc" };
     // Act
     const { body } = await request(app).get(`${BasePath}?sort=desc&page=3&limit=50`).expect(expectedResponseStatus); // WITH VALID QUERY PARAMS
     const { body: bodyAsync } = await request(app).get(`${BasePathAsync}?sort=desc&page=3&limit=50`).expect(expectedResponseStatus); // WITH VALID QUERY PARAMS
     // Assert
-    expect(body).toBeArrayOfSize(0);
+    expect(body).toBeArrayOfSize(1);
+    expect(body[0].id).toBe(expectedResponseBody.id);
+    expect(body[0].url).toBe(expectedResponseBody.url);
     expect(body).toEqual(bodyAsync);
   });
 
@@ -138,6 +142,23 @@ describe("URL-Shortener endpoint", () => {
     const messages = JSON.parse(body.message);
     expect(messages[0].message).toEqual(expectedErrorMessage_Invalid_sort);
     expect(messages[1].message).toEqual(expectedErrorMessage_Invalid_limit);
+  });
+
+  it(`GET '${BasePath}/:id' and '${BasePathAsync}/:id' should respond with a url-item`, async () => {
+    expect.assertions(5);
+    // Arrange
+    const testParameter = "testid"; // 6 chars, existing url-item
+    const expectedStatusCode = httpStatus.OK;
+    const expectedResponseBody = { id: "testid", url: "https://github.com/khatastroffik/express-poc" };
+    // Act
+    const { body } = await request(app).get(`${BasePath}/${testParameter}`).expect(expectedStatusCode);
+    const { body: bodyAsync } = await request(app).get(`${BasePathAsync}/${testParameter}`).expect(expectedStatusCode);
+    // Assert
+    expect(body).not.toBeEmptyObject();
+    expect(body).toEqual(bodyAsync);
+    expect(body).toContainKeys(["id", "url"]);
+    expect(body.id).toEqual(expectedResponseBody.id);
+    expect(body.url).toEqual(expectedResponseBody.url);
   });
 
   it(`GET '${BasePath}/:id' and '${BasePathAsync}/:id' should validate a well formed Request parameter`, async () => {
