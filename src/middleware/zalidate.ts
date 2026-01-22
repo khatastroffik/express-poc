@@ -2,7 +2,7 @@
 import type { NextFunction, Request, Response } from "express";
 import type { z } from "zod";
 import { BadRequestError } from "@lib/errors";
-import { valize, valizeAsync, valizeLooze, valizeLoozeAsync } from "@lib/valize";
+import { valize, valizeAsync, valizeLoose, valizeLooseAsync } from "@lib/valize";
 import { ZodError } from "zod";
 
 export interface zalidateArgs {
@@ -42,7 +42,7 @@ export function zalidate(schemas: zalidateArgs) {
       }
       if (schemas.headersSchema) {
         // !! DO NOT VALIDATE STRICTLY TO NOT THROW ON RECEIVED HEADERS NOT DEFINED IN THE SCHEMA !!
-        const validHeaders = valizeLooze(req.headers, schemas.headersSchema);
+        const validHeaders = valizeLoose(req.headers, schemas.headersSchema);
         req.headers = { ...req.headers, ...validHeaders as any };
       }
       return next();
@@ -88,7 +88,7 @@ export function zalidateAsync(schemas: zalidateArgs) {
       }
       if (schemas.headersSchema) {
         // !! DO NOT VALIDATE STRICTLY TO NOT THROW ON RECEIVED HEADERS NOT DEFINED IN THE SCHEMA !!
-        const validHeaders = await valizeLoozeAsync(req.headers, schemas.headersSchema);
+        const validHeaders = await valizeLooseAsync(req.headers, schemas.headersSchema);
         req.headers = { ...req.headers, ...validHeaders as any };
       }
       return next();
