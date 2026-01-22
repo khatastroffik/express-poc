@@ -1,9 +1,8 @@
 /* /// <reference types="express-serve-static-core" /> */
 import type { NextFunction, Request, Response } from "express";
-import type { z } from "zod";
 import { BadRequestError } from "@lib/errors";
 import { valize, valizeAsync, valizeLoose, valizeLooseAsync } from "@lib/valize";
-import { ZodError } from "zod";
+import { z } from "zod";
 
 export interface zalidateArgs {
   paramsSchema?: z.ZodObject;
@@ -48,8 +47,8 @@ export function zalidate(schemas: zalidateArgs) {
       return next();
     }
     catch (err) {
-      if (err instanceof ZodError) {
-        return next(new BadRequestError(err.message));
+      if (err instanceof z.ZodError) {
+        return next(new BadRequestError(err.message, err));
       }
       else {
         return next(err);
@@ -94,8 +93,8 @@ export function zalidateAsync(schemas: zalidateArgs) {
       return next();
     }
     catch (err) {
-      if (err instanceof ZodError) {
-        return next(new BadRequestError(err.message));
+      if (err instanceof z.ZodError) {
+        return next(new BadRequestError(err.message, err));
       }
       else {
         return next(err);
