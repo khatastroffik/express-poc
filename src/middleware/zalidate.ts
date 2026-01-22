@@ -1,9 +1,9 @@
 /* /// <reference types="express-serve-static-core" /> */
 import type { NextFunction, Request, Response } from "express";
 import type { z } from "zod";
+import { BadRequestError } from "@lib/errors";
+import { valize, valizeAsync, valizeLooze, valizeLoozeAsync } from "@lib/valize";
 import { ZodError } from "zod";
-import { BadRequestError } from "../lib/errors";
-import { valize, valizeAsync, valizeLooze, valizeLoozeAsync } from "../lib/valize";
 
 export interface zalidateArgs {
   paramsSchema?: z.ZodObject;

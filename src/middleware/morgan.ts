@@ -1,8 +1,8 @@
 import type { Request, Response } from "express";
+import { colorize, statusColor } from "@lib/ansi-colors";
+import logger from "@lib/logger";
+import { prettyBytes } from "@lib/pretty-bytes";
 import morgan from "morgan";
-import { colorize, statusColor } from "../lib/ansi-colors";
-import logger from "../lib/logger";
-import { prettyBytes } from "../lib/pretty-bytes";
 
 const log = logger("MORG");
 

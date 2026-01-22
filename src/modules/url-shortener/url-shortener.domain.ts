@@ -1,6 +1,6 @@
 import type { ZodOpenApiOperationObject } from "zod-openapi";
+import { ClientErrorSchema, GetAllRequestQuerySchema, IdSchema, LAN_OR_WAN, QueryLimit, QueryPage, QuerySort, RequestParamId, ServerErrorSchema } from "@lib/zod-schemas";
 import z from "zod";
-import { ClientErrorSchema, GetAllRequestQuerySchema, IdSchema, LAN_OR_WAN, QueryLimit, QueryPage, QuerySort, RequestParamId, ServerErrorSchema } from "../../lib/zod-schemas";
 
 /**
  * Branding the UrlItem with the UrlId property

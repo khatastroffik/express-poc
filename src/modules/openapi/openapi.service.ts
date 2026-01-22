@@ -1,7 +1,7 @@
 import type { oas31 } from "zod-openapi";
+import { getOneUrlItem, getUrlItems } from "@modules/url-shortener/url-shortener.domain";
 import yaml from "yaml";
 import { createDocument } from "zod-openapi";
-import { getOneUrlItem, getUrlItems } from "../url-shortener/url-shortener.domain";
 
 const openapiSpecificationDocument: oas31.OpenAPIObject = createDocument({
   openapi: "3.1.1",

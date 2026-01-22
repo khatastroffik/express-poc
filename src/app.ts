@@ -1,12 +1,12 @@
 import type { Express } from "express";
+import { discloseEnvironment, simpleEndpoint, simulateErrorLogs, simulateException, simulateRejection } from "@lib/simulations";
+import openApi from "@modules/openapi/openapi.router";
+import urlShortener from "@modules/url-shortener/url-shortener.router";
+import { catchAll } from "@mw/catch-all";
+import morganMiddleware from "@mw/morgan";
 import bodyParser from "body-parser";
 import express from "express";
 import helmet from "helmet";
-import { discloseEnvironment, simpleEndpoint, simulateErrorLogs, simulateException, simulateRejection } from "./lib/simulations";
-import { catchAll } from "./middleware/catch-all";
-import morganMiddleware from "./middleware/morgan";
-import openApi from "./modules/openapi/openapi.router";
-import urlShortener from "./modules/url-shortener/url-shortener.router";
 
 const app: Express = express();
 

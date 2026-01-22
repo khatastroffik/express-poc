@@ -1,6 +1,6 @@
 import type { UrlId, UrlItem, UrlItemRetrieveDAO, UrlItemSaveDAO } from "./url-shortener.domain";
-import { NotFoundError } from "../../lib/errors";
-import IDService from "./../../lib/id-service";
+import { NotFoundError } from "@lib/errors";
+import IDService from "@lib/id-service";
 
 class UrlShortenerService {
   /**

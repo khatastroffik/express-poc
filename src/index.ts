@@ -1,8 +1,8 @@
 import { exit } from "node:process";
+import { env } from "@lib/environment";
+import logger from "@lib/logger";
+import { simulateUncaughtExceptionsOrRejections } from "@lib/simulations";
 import app from "./app";
-import { env } from "./lib/environment";
-import logger from "./lib/logger";
-import { simulateUncaughtExceptionsOrRejections } from "./lib/simulations";
 
 const log = logger("MAIN");
 

@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from "express";
+import { env } from "@lib/environment";
+import { HTTPError } from "@lib/errors";
+import logger from "@lib/logger";
 import { status } from "http-status";
-import { env } from "../lib/environment";
-import { HTTPError } from "../lib/errors";
-import logger from "../lib/logger";
 
 const log = logger("CALL");
 

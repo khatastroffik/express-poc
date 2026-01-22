@@ -1,9 +1,9 @@
 /* eslint-disable test/prefer-lowercase-title */
+import logger from "@lib/logger";
+import urlShortener from "@modules/url-shortener/url-shortener.router";
 import httpStatus from "http-status";
 import request from "supertest";
 import app from "./app";
-import logger from "./lib/logger";
-import urlShortener from "./modules/url-shortener/url-shortener.router";
 
 const log = logger();
 

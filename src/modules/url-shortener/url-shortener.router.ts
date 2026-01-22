@@ -1,6 +1,6 @@
 import type { Router } from "express";
+import { zalidate, zalidateAsync } from "@mw/zalidate";
 import express from "express";
-import { zalidate, zalidateAsync } from "../../middleware/zalidate";
 import UrlShortenerController from "./url-shortener.controller";
 import { UrlItemGetAllRequestQuerySchema, UrlItemRequestBodySchema, UrlItemRequestHeadersSchema, UrlItemRequestParamSchema } from "./url-shortener.domain";
 
