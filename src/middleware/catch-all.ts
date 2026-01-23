@@ -19,10 +19,7 @@ export function catchAll(err: Error | HTTPError, req: Request, res: Response, ne
     return next(err);
   }
   const statusCode = err instanceof HTTPError ? err.statuscode : status.INTERNAL_SERVER_ERROR;
-  // const details = (err instanceof HTTPError && err.details) ? { details: err.details } : {};
-
   const message = err.message || status[statusCode];
-
   const payload = { status: "error", statusCode, message, ...((err instanceof HTTPError && err.details) ? err.details : {}) };
   log.debug(payload);
   res.status(statusCode).json(payload);

@@ -13,7 +13,7 @@ export const Sort = { asc: "asc", desc: "desc" } as const;
 export const QuerySort = z.enum(Sort, "Invalid 'sort' query option: expected one of 'asc' or 'desc'")
   .optional()
   .meta({ param: { id: "QuerySort", name: "sort", in: "query" }, description: "sort the list ascending or descending" });
-  // .meta({ id: "QuerySort", param: { id: "QuerySort", name: "QuerySort", in: "query" }, description: "sort the list ascending or descending" });
+
 export const QueryPage = z.coerce.number()
   .int()
   .min(1)
@@ -35,6 +35,13 @@ export const ClientErrorSchema = z.object({
   statuscode: z.number().int().min(400).max(499).nonoptional(),
   message: z.string().nonempty().nonoptional(),
 }).meta({ id: "ClientError", description: "Client request error" });
+
+export const ClientErrorBadRequestSchema = z.object({
+  ...ClientErrorSchema.shape, // merge shapes - better than with ClientErrorSchema.extend(...)
+  statuscode: z.literal(400),
+  formErrors: z.array(z.string()).meta({ description: "Request Validation: The 'formErrors' array contains details on any top-level errors e.g. about unrecognized keys/properties." }),
+  fieldErrors: z.record(z.string(), z.array(z.string())).meta({ description: "Request Validation: The 'fieldErrors' object provides an array of errors for each invalid field in the schema." }),
+}).meta({ id: "ClientErrorBadRequest", description: "Client request error" });
 
 export const ServerErrorSchema = z.object({
   status: z.literal("error").meta({ example: "error" }),
