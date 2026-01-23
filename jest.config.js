@@ -9,6 +9,11 @@ module.exports = {
   verbose: !isCI,
   preset: "ts-jest/presets/js-with-ts",
   moduleFileExtensions: ["ts", "tsx", "js"],
+  moduleNameMapper: {
+    "@lib/(.*)": "<rootDir>/src/lib/$1",
+    "@mw/(.*)": "<rootDir>/src/middleware/$1",
+    "@modules/(.*)": "<rootDir>/src/modules/$1",
+  },
   testEnvironment: "node",
   transform: {
     ...tsJestTransformCfg,

@@ -1,5 +1,6 @@
 import type { HttpStatus } from "http-status";
 import status from "http-status";
+import { z } from "zod";
 
 type OnlyNumberKeys<T> = T extends number ? T : never;
 type StatusCodeKey = OnlyNumberKeys<keyof HttpStatus>;
@@ -7,13 +8,14 @@ type StatusCodeKey = OnlyNumberKeys<keyof HttpStatus>;
 export class HTTPError extends Error {
   public statuscode: StatusCodeKey;
   public override message: string;
-  constructor(statuscode: StatusCodeKey, message?: string) {
+  public details: any | undefined;
+  constructor(statuscode: StatusCodeKey, message?: string, originalError: Error | undefined = undefined) {
     super(message);
     Error.captureStackTrace(this, this.constructor);
-    const msg = message || status[statuscode] as string;
+    this.message = status[statuscode] as string;
     this.name = `[${status[`${statuscode}_CLASS`]}][${statuscode}]`; // this.constructor.name;
     this.statuscode = statuscode;
-    this.message = msg;
+    this.details = (originalError && originalError instanceof z.ZodError) ? z.flattenError(originalError) : undefined;
   }
 }
 
@@ -27,8 +29,8 @@ export class HTTPError extends Error {
  * 400 - BAD_REQUEST
  */
 export class BadRequestError extends HTTPError {
-  constructor(message?: string) {
-    super(status.BAD_REQUEST, message);
+  constructor(message?: string, originalError: Error | undefined = undefined) {
+    super(status.BAD_REQUEST, message, originalError);
   }
 }
 

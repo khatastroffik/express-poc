@@ -5,6 +5,11 @@
     "moduleDetection": "force",
     "rootDir": "./src",
     "module": "nodenext",
+    "paths": {
+      "@lib/*": ["./src/lib/*"],
+      "@mw/*": ["./src/middleware/*"],
+      "@modules/*": ["./src/modules/*"]
+    },
     "strict": true,
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,

@@ -1,9 +1,9 @@
 /* eslint-disable test/prefer-lowercase-title */
+import logger from "@lib/logger";
+import urlShortener from "@modules/url-shortener/url-shortener.router";
 import httpStatus from "http-status";
 import request from "supertest";
 import app from "./app";
-import logger from "./lib/logger";
-import urlShortener from "./modules/url-shortener/url-shortener.router";
 
 const log = logger();
 
@@ -139,9 +139,8 @@ describe("URL-Shortener endpoint", () => {
     expect(body).toContainKeys(["message", "statusCode", "status"]);
     expect(body.status).toBe("error");
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
-    const messages = JSON.parse(body.message);
-    expect(messages[0].message).toEqual(expectedErrorMessage_Invalid_sort);
-    expect(messages[1].message).toEqual(expectedErrorMessage_Invalid_limit);
+    expect(body.fieldErrors.sort[0]).toEqual(expectedErrorMessage_Invalid_sort);
+    expect(body.fieldErrors.limit[0]).toEqual(expectedErrorMessage_Invalid_limit);
   });
 
   it(`GET '${BasePath}/:id' and '${BasePathAsync}/:id' should respond with a url-item`, async () => {
@@ -166,7 +165,7 @@ describe("URL-Shortener endpoint", () => {
     // Arrange
     const testParameter = "abcdef"; // 6 chars, non existing url-item
     const expectedStatusCode = httpStatus.NOT_FOUND;
-    const expectedResponseBody = { message: "URL could not be found", status: "error", statusCode: 404 };
+    const expectedResponseBody = { message: "Not Found", status: "error", statusCode: 404 };
     // Act
     const { body } = await request(app).get(`${BasePath}/${testParameter}`).expect(expectedStatusCode);
     const { body: bodyAsync } = await request(app).get(`${BasePathAsync}/${testParameter}`).expect(expectedStatusCode);
@@ -182,7 +181,7 @@ describe("URL-Shortener endpoint", () => {
     expect.assertions(6);
     // Arrange
     const testParameter = "not-well-formed-id-parameter"; // > 6 chars
-    const expectedErrorMessage = "Too big: expected string to have <=6 characters";
+    const expectedErrorMessage = "Bad Request";
     const expectedErrorStatusCode = httpStatus.BAD_REQUEST;
     // Act
     const { body } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
@@ -193,14 +192,14 @@ describe("URL-Shortener endpoint", () => {
     expect(body).toContainKeys(["message", "statusCode", "status"]);
     expect(body.status).toBe("error");
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
-    expect(JSON.parse(body.message)[0].message).toEqual(expectedErrorMessage);
+    expect(body.message).toEqual(expectedErrorMessage);
   });
 
   it(`GET '${BasePath}/:id' and '${BasePathAsync}/:id' should respond with '400: Bad Request' when the Id parameter is not well formed e.g. is not long enough`, async () => {
     expect.assertions(6);
     // Arrange
     const testParameter = "bad"; // < 6 chars
-    const expectedErrorMessage = "Too small: expected string to have >=6 characters";
+    const expectedErrorMessage = "Bad Request";
     const expectedErrorStatusCode = httpStatus.BAD_REQUEST;
     // Act
     const { body } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
@@ -211,7 +210,7 @@ describe("URL-Shortener endpoint", () => {
     expect(body).toContainKeys(["message", "statusCode", "status"]);
     expect(body.status).toBe("error");
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
-    expect(JSON.parse(body.message)[0].message).toEqual(expectedErrorMessage);
+    expect(body.message).toEqual(expectedErrorMessage);
   });
 
   it(`POST '${BasePath}' and '${BasePathAsync}' should respond correctly`, async () => {
@@ -294,7 +293,7 @@ describe("URL-Shortener endpoint", () => {
     expect.assertions(4);
     // Arrange
     const payload = { url: "github.com/khatastroffik/express-poc" }; // missing protocol
-    const expectedErrorMessage = "Invalid input: expected an URL (protocol + LAN or WAN hostname/IP)";
+    const expectedErrorMessage = "Bad Request";
     // Act
     const { body } = await request(app)
       .post(BasePath)
@@ -312,14 +311,14 @@ describe("URL-Shortener endpoint", () => {
     expect(body).not.toBeEmptyObject();
     expect(body).toStrictEqual(bodyAsync);
     expect(body).toContainKeys(["message", "statusCode", "status"]);
-    expect(JSON.parse(body.message)[0].message).toEqual(expectedErrorMessage);
+    expect(body.message).toEqual(expectedErrorMessage);
   });
 
   it(`POST '${BasePath}' and '${BasePathAsync}' should respond with '400: Bad Request' when the (wan or lan) url is missing`, async () => {
     expect.assertions(4);
     // Arrange
     const payload = {}; // missing url
-    const expectedErrorMessage = "Invalid input: expected an URL (protocol + LAN or WAN hostname/IP)";
+    const expectedErrorMessage = "Bad Request";
     // Act
     const { body } = await request(app)
       .post(BasePath)
@@ -337,14 +336,14 @@ describe("URL-Shortener endpoint", () => {
     expect(body).not.toBeEmptyObject();
     expect(body).toStrictEqual(bodyAsync);
     expect(body).toContainKeys(["message", "statusCode", "status"]);
-    expect(JSON.parse(body.message)[0].message).toEqual(expectedErrorMessage);
+    expect(body.message).toEqual(expectedErrorMessage);
   });
 
   it(`POST '${BasePath}' and '${BasePathAsync}' should respond with '400: Bad Request' when the body contains unexpected, additional properties`, async () => {
     expect.assertions(4);
     // Arrange
     const payload = { url: "github.com/khatastroffik/express-poc", foo: "bar" }; // unexpected property
-    const expectedErrorMessage = "Invalid input: expected an URL (protocol + LAN or WAN hostname/IP)";
+    const expectedErrorMessage = "Bad Request";
     // Act
     const { body } = await request(app)
       .post(BasePath)
@@ -362,6 +361,6 @@ describe("URL-Shortener endpoint", () => {
     expect(body).not.toBeEmptyObject();
     expect(body).toStrictEqual(bodyAsync);
     expect(body).toContainKeys(["message", "statusCode", "status"]);
-    expect(JSON.parse(body.message)[0].message).toEqual(expectedErrorMessage);
+    expect(body.message).toEqual(expectedErrorMessage);
   });
 });

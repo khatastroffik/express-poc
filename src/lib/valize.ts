@@ -34,7 +34,7 @@ const ZodUnrecognizedKeysErrorMessageHandler = { error: (issue: any) => {
 /********************************************************
  * valizeLoose
 *******************************************************/
-export function valizeLooze<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA): z.output<SCHEMA> {
+export function valizeLoose<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA): z.output<SCHEMA> {
   const result = schema.parse(payload, ZodUnrecognizedKeysErrorMessageHandler);
   return result as unknown as z.output<SCHEMA>;
 }
@@ -50,7 +50,7 @@ export function valize<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA)
 /********************************************************
  * valizeLoose Async
 *******************************************************/
-export async function valizeLoozeAsync<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA): Promise<z.output<SCHEMA>> {
+export async function valizeLooseAsync<SCHEMA extends z.ZodObject>(payload: any, schema: SCHEMA): Promise<z.output<SCHEMA>> {
   const result = await schema.parseAsync(payload, ZodUnrecognizedKeysErrorMessageHandler);
   return result as unknown as z.output<SCHEMA>;
 }

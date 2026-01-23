@@ -48,5 +48,6 @@
     "pcss",
     "postcss"
   ],
-  "npm.packageManager": "pnpm"
+  "npm.packageManager": "pnpm",
+  "typescript.preferences.importModuleSpecifier": "non-relative"
 }

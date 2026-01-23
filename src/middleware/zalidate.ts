@@ -1,9 +1,8 @@
 /* /// <reference types="express-serve-static-core" /> */
 import type { NextFunction, Request, Response } from "express";
-import type { z } from "zod";
-import { ZodError } from "zod";
-import { BadRequestError } from "../lib/errors";
-import { valize, valizeAsync, valizeLooze, valizeLoozeAsync } from "../lib/valize";
+import { BadRequestError } from "@lib/errors";
+import { valize, valizeAsync, valizeLoose, valizeLooseAsync } from "@lib/valize";
+import { z } from "zod";
 
 export interface zalidateArgs {
   paramsSchema?: z.ZodObject;
@@ -42,14 +41,14 @@ export function zalidate(schemas: zalidateArgs) {
       }
       if (schemas.headersSchema) {
         // !! DO NOT VALIDATE STRICTLY TO NOT THROW ON RECEIVED HEADERS NOT DEFINED IN THE SCHEMA !!
-        const validHeaders = valizeLooze(req.headers, schemas.headersSchema);
+        const validHeaders = valizeLoose(req.headers, schemas.headersSchema);
         req.headers = { ...req.headers, ...validHeaders as any };
       }
       return next();
     }
     catch (err) {
-      if (err instanceof ZodError) {
-        return next(new BadRequestError(err.message));
+      if (err instanceof z.ZodError) {
+        return next(new BadRequestError(err.message, err));
       }
       else {
         return next(err);
@@ -88,14 +87,14 @@ export function zalidateAsync(schemas: zalidateArgs) {
       }
       if (schemas.headersSchema) {
         // !! DO NOT VALIDATE STRICTLY TO NOT THROW ON RECEIVED HEADERS NOT DEFINED IN THE SCHEMA !!
-        const validHeaders = await valizeLoozeAsync(req.headers, schemas.headersSchema);
+        const validHeaders = await valizeLooseAsync(req.headers, schemas.headersSchema);
         req.headers = { ...req.headers, ...validHeaders as any };
       }
       return next();
     }
     catch (err) {
-      if (err instanceof ZodError) {
-        return next(new BadRequestError(err.message));
+      if (err instanceof z.ZodError) {
+        return next(new BadRequestError(err.message, err));
       }
       else {
         return next(err);

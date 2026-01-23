@@ -1,6 +1,5 @@
 import { basename } from "node:path";
 import winston, { ExceptionHandler, RejectionHandler } from "winston";
-
 import { env } from "./environment";
 
 const createLoggerSpy = jest.spyOn(winston, "createLogger");

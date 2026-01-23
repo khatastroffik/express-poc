@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { env } from "../../lib/environment";
+import { env } from "@lib/environment";
 import { jsonOpenApiSpecificationDocument, yamlOpenApiSpecificationDocument } from "./openapi.service";
 
 /**

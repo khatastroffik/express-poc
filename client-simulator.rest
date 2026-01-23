@@ -16,21 +16,19 @@
 // # DEMO ENDPOINTS                                      #
 // =======================================================
 
-### Simple Endpoint
+### Simple Endpoint - [200] OK
 GET {{host}}
 
-### DISCLOSE (!) the server environemnt
+### DISCLOSE (!) the server environemnt - [200] OK
 GET {{host}}/environment
 
-
-### Simulate server "logs" to console/file
+### Simulate error "logs" to console/file  - [200] OK
 GET {{host}}/simulations/logs
 
-
-### Simulate server "catch-all" for unhandled exceptions
+### Simulate server "catch-all" for unhandled exceptions - [418] I'm a Teapot
 GET {{host}}/simulations/exception
 
-### Simulate server "catch-all" for unhandled rejection [TERMINATING SERVER PROCESS]
+### Simulate server "catch-all" for unhandled rejection [!!! TERMINATING SERVER PROCESS !!!]
 GET {{host}}/simulations/rejection
 
 
@@ -38,16 +36,39 @@ GET {{host}}/simulations/rejection
 // # URL-SHORTENER ENDPOINT                              #
 // =======================================================
 
-### URL-Shortener - GetAll
+### URL-Shortener - GetAll - [200] OK
 GET {{host}}/shortener
 
-### URL-Shortener - GetOne
-GET {{host}}/shortener/1lbIMh
+### URL-Shortener - GetOne - [200] OK
+GET {{host}}/shortener/testid
 
-### URL-Shortener - Create
+### URL-Shortener - GetOne - [404] Not Found
+GET {{host}}/shortener/BAD_ID
+
+### URL-Shortener - GetOne - [400] Bad Request (too big)
+GET {{host}}/shortener/ID_TOO_LONG
+
+### URL-Shortener - Create - [201] Created
 POST {{host}}/shortener
 Content-Type: application/json
 
 {
   "url": "https://github.com/khatastroffik"
+}
+
+### URL-Shortener - Create  - [400] Bad Request (invalid input)
+POST {{host}}/shortener
+Content-Type: application/json
+
+{
+  "url": "not a valid value"
+}
+
+### URL-Shortener - Create  - [400] Bad Request (Unknown properties)
+POST {{host}}/shortener
+Content-Type: application/json
+
+{
+  "url": "https://github.com/khatastroffik",
+  "unknown-property": "should not be there"
 }

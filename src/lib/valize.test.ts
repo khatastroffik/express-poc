@@ -1,5 +1,5 @@
 import z, { ZodError } from "zod";
-import { validatePayloadWithZodSchema, valize, valizeLooze } from "./valize";
+import { validatePayloadWithZodSchema, valize, valizeAsync, valizeLoose, valizeLooseAsync } from "./valize";
 
 const TestSchema = z.object({
   name: z.string().trim().nonempty("Property 'name' must not be an empty string"),
@@ -91,13 +91,13 @@ describe("validatePayloadWithZodSchema", () => {
  * valizeLoose
 *******************************************************/
 
-describe("valize", () => {
+describe("valizeLoose", () => {
   it("should loosely validate correct payloads", () => {
     // Arrange
     looselyValidPayloads.forEach((payload) => {
       const expected = typeof payload.age === "string" ? Number.parseInt(payload.age) : payload.age;
       // Act & Assert
-      expect(valizeLooze(payload, TestSchema)).toEqual({ name: payload.name, age: expected });
+      expect(valizeLoose(payload, TestSchema)).toEqual({ name: payload.name, age: expected });
     });
   });
 
@@ -106,7 +106,7 @@ describe("valize", () => {
     strictlyValidPayloads.forEach((payload) => {
       const expected = typeof payload.age === "string" ? Number.parseInt(payload.age) : payload.age;
       // Act & Assert
-      expect(valizeLooze(payload, TestSchemaStrict)).toEqual({
+      expect(valizeLoose(payload, TestSchemaStrict)).toEqual({
         name: payload.name,
         age: expected,
       });
@@ -118,7 +118,7 @@ describe("valize", () => {
     const payloads = Array.from (looselyInvalidPayload);
     payloads.forEach((payload) => {
       // Act & Assert
-      expect(() => valizeLooze(payload, TestSchema)).toThrow(ZodError);
+      expect(() => valizeLoose(payload, TestSchema)).toThrow(ZodError);
     });
   });
 
@@ -127,16 +127,57 @@ describe("valize", () => {
     const payloads = Array.from (strictlyInvalidPayload);
     payloads.forEach((payload) => {
       // Act & Assert
-      expect(() => valizeLooze(payload, TestSchemaStrict)).toThrow(ZodError);
+      expect(() => valizeLoose(payload, TestSchemaStrict)).toThrow(ZodError);
+    });
+  });
+});
+
+describe("valizeLooseAsync", () => {
+  it("should loosely validate correct payloads", async () => {
+    // Arrange
+    looselyValidPayloads.forEach(async (payload) => {
+      const expected = typeof payload.age === "string" ? Number.parseInt(payload.age) : payload.age;
+      // Act & Assert
+      await expect(valizeLooseAsync(payload, TestSchema)).resolves.toEqual({ name: payload.name, age: expected });
+    });
+  });
+
+  it("should strictly validate correct payloads", async () => {
+    // Arrange
+    strictlyValidPayloads.forEach(async (payload) => {
+      const expected = typeof payload.age === "string" ? Number.parseInt(payload.age) : payload.age;
+      // Act & Assert
+      await expect(valizeLooseAsync(payload, TestSchemaStrict)).resolves.toEqual({
+        name: payload.name,
+        age: expected,
+      });
+    });
+  });
+
+  it("should throw due to loosely invalid payloads", async () => {
+    // Arrange
+    const payloads = Array.from (looselyInvalidPayload);
+    payloads.forEach(async (payload) => {
+      // Act & Assert
+      await expect(valizeLooseAsync(payload, TestSchema)).rejects.toThrow(ZodError);
+    });
+  });
+
+  it("should throw due to strictly invalid payloads", async () => {
+    // Arrange
+    const payloads = Array.from (strictlyInvalidPayload);
+    payloads.forEach(async (payload) => {
+      // Act & Assert
+      await expect(valizeLooseAsync(payload, TestSchemaStrict)).rejects.toThrow(ZodError);
     });
   });
 });
 
 /********************************************************
- * valizeStrict
+ * valize
  *******************************************************/
 
-describe("valizeStrict", () => {
+describe("valize", () => {
   it("should strictly validate correct payloads", () => {
     // Arrange
     strictlyValidPayloads.forEach((payload) => {
@@ -155,6 +196,28 @@ describe("valizeStrict", () => {
     payloads.forEach((payload) => {
       // Act & Assert
       expect(() => valize(payload, TestSchemaStrict)).toThrow(ZodError);
+    });
+  });
+});
+
+describe("valizeAsync", () => {
+  it("should strictly validate correct payloads", async () => {
+    // Arrange
+    strictlyValidPayloads.forEach(async (payload) => {
+      const expected = typeof payload.age === "string" ? Number.parseInt(payload.age) : payload.age;
+      // Act & Assert
+      await expect(valizeAsync(payload, TestSchemaStrict)).resolves.toEqual({
+        name: payload.name,
+        age: expected,
+      });
+    });
+  });
+  it("should throw due to strictly invalid payloads", async () => {
+    // Arrange
+    const payloads = Array.from (strictlyInvalidPayload);
+    payloads.forEach(async (payload) => {
+      // Act & Assert
+      await expect(valizeAsync(payload, TestSchemaStrict)).rejects.toThrow(ZodError);
     });
   });
 });
