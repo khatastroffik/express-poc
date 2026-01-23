@@ -1,5 +1,5 @@
 import type { ZodOpenApiOperationObject } from "zod-openapi";
-import { ClientErrorSchema, GetAllRequestQuerySchema, IdSchema, LAN_OR_WAN, QueryLimit, QueryPage, QuerySort, RequestParamId, ServerErrorSchema } from "@lib/zod-schemas";
+import { ClientErrorBadRequestSchema, ClientErrorSchema, GetAllRequestQuerySchema, IdSchema, LAN_OR_WAN, QueryLimit, QueryPage, QuerySort, RequestParamId, ServerErrorSchema } from "@lib/zod-schemas";
 import z from "zod";
 
 /**
@@ -42,7 +42,7 @@ export const UrlItemRequestParamSchema = z.object({
 
 export const UrlItemRequestBodySchema = z.object({
   url: LAN_OR_WAN,
-});
+}).meta({ id: "NewUrlItem", description: "A schema containing the url of an item to be created." });
 
 export const UrlItemRequestHeadersSchema = z.object({
   // for DEMO purpose
@@ -68,10 +68,10 @@ export const UrlItemSchema = z.object({
 export const UrlItemsSchema = z.array(UrlItemSchema).meta({ id: "UrlItems", description: "A list of url-items." });
 
 export const getUrlItems: ZodOpenApiOperationObject = {
-  operationId: "getUrlItems",
+  operationId: "get URL Items",
   summary: "List URL items",
   description: "Lists all URL items in the database.",
-  tags: ["url-items"],
+  tags: ["URL Shortener"],
   parameters: [QuerySort, QueryPage, QueryLimit],
   responses: {
     200: {
@@ -83,10 +83,10 @@ export const getUrlItems: ZodOpenApiOperationObject = {
 };
 
 export const getOneUrlItem: ZodOpenApiOperationObject = {
-  operationId: "getUrlItem",
-  summary: "Get an URL item",
+  operationId: "get one URL Item",
+  summary: "Retriev a single URL item",
   description: "Gets a URL item from the database.",
-  tags: ["url-items"],
+  tags: ["URL Shortener"],
   requestParams: {
     path: z.object({ id: UrlIdSchema }),
   },
@@ -98,12 +98,46 @@ export const getOneUrlItem: ZodOpenApiOperationObject = {
     },
     "400": {
       description: "Bad request",
-      content: { "application/json": { schema: ClientErrorSchema.meta({ example: "{ \"status\": \"error\", \"statuscode\": 400, \"message\": \"Bad Request\"}" }) },
+      content: { "application/json": { schema: ClientErrorBadRequestSchema.meta({ example: "{ \"status\": \"error\", \"statuscode\": 400, \"message\": \"Bad Request\"}" }) },
       },
     },
     "404": {
       description: "Not Found",
       content: { "application/json": { schema: ClientErrorSchema.meta({ example: "{ \"status\": \"error\", \"statuscode\": 404, \"message\": \"Not Found\"}" }) },
+      },
+    },
+    "5XX": {
+      description: "Server error",
+      content: { "application/json": { schema: ServerErrorSchema },
+      },
+    },
+
+  },
+};
+
+export const createUrlItem: ZodOpenApiOperationObject = {
+  operationId: "create URL Item",
+  summary: "Create a new URL item",
+  description: "Generate an ID and create/save a new URL item into the database.",
+  tags: ["URL Shortener"],
+  requestBody: {
+    description: "JSON containing the URL of the item that should be created.",
+    content: { "application/json": { schema: UrlItemRequestBodySchema } },
+  },
+  responses: {
+    "201": {
+      description: "The URL item was created successfully.",
+      content: { "application/json": { schema: UrlItemSchema },
+      },
+    },
+    "400": {
+      description: "Bad request",
+      content: { "application/json": { schema: ClientErrorBadRequestSchema.meta({ example: "{ \"status\": \"error\", \"statuscode\": 400, \"message\": \"Bad Request\",  \"formErrors\": [ \"Unrecognized key: 'extraKey\"],  \"fieldErrors\": {}}" }) },
+      },
+    },
+    "409": {
+      description: "Conflict",
+      content: { "application/json": { schema: ClientErrorSchema.meta({ example: "{ \"status\": \"error\", \"statuscode\": 409, \"message\": \"Conflict\"}" }) },
       },
     },
     "5XX": {

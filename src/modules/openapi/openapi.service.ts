@@ -1,5 +1,6 @@
 import type { oas31 } from "zod-openapi";
-import { getOneUrlItem, getUrlItems } from "@modules/url-shortener/url-shortener.domain";
+import { getJsonSpecification, getYamlSpecification } from "@modules/openapi/openapi.domain";
+import { createUrlItem, getOneUrlItem, getUrlItems } from "@modules/url-shortener/url-shortener.domain";
 import yaml from "yaml";
 import { createDocument } from "zod-openapi";
 
@@ -33,12 +34,24 @@ e.g. the query parameters of the "**GET /shortener**" endpoint have no effect on
 `,
     version: "1.0.0",
   },
+  tags: [
+    { name: "URL Shortener", description: "Endpoint operations related to the 'url-shortener' module" },
+    { name: "OAS", description: "Endpoint operations related to the 'openapi specifications' module" },
+    // { name: "Demos", description: "Endpoint operations related to the 'simulations' module" },
+  ],
   paths: {
     "/shortener": {
       get: getUrlItems,
+      post: createUrlItem,
     },
     "/shortener/{id}": {
       get: getOneUrlItem,
+    },
+    "/swagger/openapi.json": {
+      get: getJsonSpecification,
+    },
+    "/swagger/openapi.yaml": {
+      get: getYamlSpecification,
     },
   },
 });
