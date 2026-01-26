@@ -1,39 +1,72 @@
-import type { UrlId, UrlItem, UrlItemRetrieveDAO, UrlItemSaveDAO } from "./url-shortener.domain";
+import type { CRUD } from "@lib/crud";
+import type { UrlId, UrlItem, UrlItemNoId, UrlItemNoIdUpdate } from "./url-shortener.domain";
 import { NotFoundError } from "@lib/errors";
 import IDService from "@lib/id-service";
 
-class UrlShortenerService {
+export const dummyDataCount = 6;
+
+/**
+ * The "UrlShortenerService" implements the CRUD interface for the UrlItem objects.
+ */
+class UrlShortenerService implements CRUD<UrlId, UrlItem, UrlItemNoId, UrlItemNoIdUpdate> {
   /**
    * This is a "in-memory" storage for all the "shortened URLs".
    *
-   * !!! REPLACE THIS TRANSIENT STORAGE WITH A PERSISTING ONE FOR PRODUCTION USE !!!
+   * !!! **REPLACE THIS TRANSIENT STORAGE WITH A PERSISTING ONE FOR PRODUCTION USE** !!!
    */
-  private readonly storage: Map<UrlId, string> = new Map<UrlId, string>();
+  private readonly storage: Map<UrlId, UrlItem> = new Map<UrlId, UrlItem>();
+
+  /**
+   * ADD AN INITIAL ITEM FOR TESTING PURPOSE - TO BE REMOVED
+   */
+  private LoadDummyData() {
+    //
+    const id = <UrlId>("testid");
+    const url = "https://github.com/khatastroffik/express-poc";
+    this.storage.set(id, { id, url });
+    for (let index = 1; index < dummyDataCount; index++) {
+      this.create({ url: `https://www.example-${index}.com` });
+    }
+  }
 
   constructor() {
-    this.retrieveAll = this.retrieveAll.bind(this);
-    this.retrieveOne = this.retrieveOne.bind(this);
-    this.save = this.save.bind(this);
-    this.storage.set("testid" as UrlId, "https://github.com/khatastroffik/express-poc");
+    this.LoadDummyData();
   }
 
-  async retrieveAll(): Promise<UrlItemRetrieveDAO[]> {
-    return [...this.storage].map(([id, url]) => ({ id, url }));
-  }
+  async list(): Promise<UrlItem[]> {
+    return [...this.storage].map(([_id, item]) => (item));
+  };
 
-  async retrieveOne(id: UrlId): Promise<UrlItemRetrieveDAO> {
-    const url = this.storage.get(id);
-    if (!url) {
-      throw new NotFoundError("URL could not be found");
-    }
-    return { id, url };
-  }
-
-  async save(item: UrlItemSaveDAO): Promise<UrlItem> {
+  async create(item: UrlItemNoId): Promise<UrlItem> {
     const newId = IDService.generateId<UrlId>();
-    this.storage.set(newId, item.url);
-    return { id: newId, url: item.url };
-  }
+    const newItem = { id: newId, ...item };
+    this.storage.set(newId, newItem);
+    return newItem;
+  };
+
+  async read(id: UrlId): Promise<UrlItem> {
+    const existingItem = this.storage.get(id);
+    if (!existingItem) {
+      throw new NotFoundError("Read item failed: URL item could not be found");
+    }
+    return existingItem;
+  };
+
+  async delete(id: UrlId): Promise<void> {
+    if (!this.storage.delete(id)) {
+      throw new NotFoundError("Delete item failed: URL item could not be found");
+    };
+  };
+
+  async update(id: UrlId, item: UrlItemNoIdUpdate): Promise<UrlItem> {
+    const currentItem = this.storage.get(id);
+    if (!currentItem) {
+      throw new NotFoundError("Update item failed: URL item could not be found");
+    }
+    const updatedItem = { ...currentItem, ...item };
+    this.storage.set(id, updatedItem);
+    return updatedItem;
+  };
 }
 
 /**
