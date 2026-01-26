@@ -1,6 +1,7 @@
 /* eslint-disable test/prefer-lowercase-title */
 import logger from "@lib/logger";
 import urlShortener from "@modules/url-shortener/url-shortener.router";
+import { dummyDataCount } from "@modules/url-shortener/url-shortener.service";
 import httpStatus from "http-status";
 import request from "supertest";
 import app from "./app";
@@ -100,11 +101,12 @@ describe("URL-Shortener endpoint", () => {
     expect.assertions(3);
     // Arrange
     const expectedResponseStatus = httpStatus.OK;
+
     // Act
     const { body } = await request(app).get(BasePath).expect(expectedResponseStatus); // WITHOUT QUERY PARAMS
     const { body: bodyAsync } = await request(app).get(BasePathAsync).expect(expectedResponseStatus); // WITHOUT QUERY PARAMS
     // Assert
-    expect(body).toBeArrayOfSize(1);
+    expect(body).toBeArrayOfSize(dummyDataCount);
     expect(body[0].url).toBe("https://github.com/khatastroffik/express-poc");
     expect(body).toEqual(bodyAsync);
   });
@@ -118,20 +120,20 @@ describe("URL-Shortener endpoint", () => {
     const { body } = await request(app).get(`${BasePath}?sort=desc&page=3&limit=50`).expect(expectedResponseStatus); // WITH VALID QUERY PARAMS
     const { body: bodyAsync } = await request(app).get(`${BasePathAsync}?sort=desc&page=3&limit=50`).expect(expectedResponseStatus); // WITH VALID QUERY PARAMS
     // Assert
-    expect(body).toBeArrayOfSize(1);
+    expect(body).toBeArrayOfSize(dummyDataCount);
     expect(body[0].id).toBe(expectedResponseBody.id);
     expect(body[0].url).toBe(expectedResponseBody.url);
     expect(body).toEqual(bodyAsync);
   });
 
   it(`GET '${BasePath}' and '${BasePathAsync}' should respond with '400: Bad Request' when the query parameters are not valid`, async () => {
-    expect.assertions(7);
+    expect.assertions(8);
     // Arrange
     const expectedErrorMessage_Invalid_sort = "Invalid 'sort' query option: expected one of 'asc' or 'desc'";
     const expectedErrorMessage_Invalid_limit = "Invalid 'limit' query option: expected one of '10', '25', '50' or '100'";
     const expectedErrorStatusCode = httpStatus.BAD_REQUEST;
     // Act
-    const { body } = await request(app).get(`${BasePath}?sort=unsorted&page=3&limit=22`).expect(expectedErrorStatusCode); // WITH INVALID QUERY PARAMS
+    const { body, clientError } = await request(app).get(`${BasePath}?sort=unsorted&page=3&limit=22`).expect(expectedErrorStatusCode); // WITH INVALID QUERY PARAMS
     const { body: bodyAsync } = await request(app).get(`${BasePathAsync}?sort=unsorted&page=3&limit=22`).expect(expectedErrorStatusCode); // WITH INVALID QUERY PARAMS
     // Assert
     expect(body).not.toBeEmptyObject();
@@ -141,6 +143,7 @@ describe("URL-Shortener endpoint", () => {
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
     expect(body.fieldErrors.sort[0]).toEqual(expectedErrorMessage_Invalid_sort);
     expect(body.fieldErrors.limit[0]).toEqual(expectedErrorMessage_Invalid_limit);
+    expect(clientError).toBeTrue();
   });
 
   it(`GET '${BasePath}/:id' and '${BasePathAsync}/:id' should respond with a url-item`, async () => {
@@ -161,13 +164,13 @@ describe("URL-Shortener endpoint", () => {
   });
 
   it(`GET '${BasePath}/:id' and '${BasePathAsync}/:id' should validate a well formed Request parameter`, async () => {
-    expect.assertions(5);
+    expect.assertions(6);
     // Arrange
     const testParameter = "abcdef"; // 6 chars, non existing url-item
     const expectedStatusCode = httpStatus.NOT_FOUND;
     const expectedResponseBody = { message: "Not Found", status: "error", statusCode: 404 };
     // Act
-    const { body } = await request(app).get(`${BasePath}/${testParameter}`).expect(expectedStatusCode);
+    const { body, clientError } = await request(app).get(`${BasePath}/${testParameter}`).expect(expectedStatusCode);
     const { body: bodyAsync } = await request(app).get(`${BasePathAsync}/${testParameter}`).expect(expectedStatusCode);
     // Assert
     expect(body).not.toBeEmptyObject();
@@ -175,16 +178,17 @@ describe("URL-Shortener endpoint", () => {
     expect(body).toContainKeys(["message", "statusCode", "status"]);
     expect(body.message).toEqual(expectedResponseBody.message);
     expect(body.status).toEqual(expectedResponseBody.status);
+    expect(clientError).toBeTrue();
   });
 
   it(`GET '${BasePath}/:id' and '${BasePathAsync}/:id' should respond with '400: Bad Request' when the Id parameter is not well formed e.g. is too long`, async () => {
-    expect.assertions(6);
+    expect.assertions(7);
     // Arrange
     const testParameter = "not-well-formed-id-parameter"; // > 6 chars
     const expectedErrorMessage = "Bad Request";
     const expectedErrorStatusCode = httpStatus.BAD_REQUEST;
     // Act
-    const { body } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
+    const { body, clientError } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
     const { body: bodyAsync } = (await request(app).get(`${BasePathAsync}/${testParameter}`).expect(expectedErrorStatusCode));
     // Assert
     expect(body).not.toBeEmptyObject();
@@ -193,16 +197,17 @@ describe("URL-Shortener endpoint", () => {
     expect(body.status).toBe("error");
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
     expect(body.message).toEqual(expectedErrorMessage);
+    expect(clientError).toBeTrue();
   });
 
   it(`GET '${BasePath}/:id' and '${BasePathAsync}/:id' should respond with '400: Bad Request' when the Id parameter is not well formed e.g. is not long enough`, async () => {
-    expect.assertions(6);
+    expect.assertions(7);
     // Arrange
     const testParameter = "bad"; // < 6 chars
     const expectedErrorMessage = "Bad Request";
     const expectedErrorStatusCode = httpStatus.BAD_REQUEST;
     // Act
-    const { body } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
+    const { body, clientError } = (await request(app).get(`${BasePath}/${testParameter}`).expect(expectedErrorStatusCode));
     const { body: bodyAsync } = (await request(app).get(`${BasePathAsync}/${testParameter}`).expect(expectedErrorStatusCode));
     // Assert
     expect(body).not.toBeEmptyObject();
@@ -211,25 +216,27 @@ describe("URL-Shortener endpoint", () => {
     expect(body.status).toBe("error");
     expect(body.statusCode).toEqual(expectedErrorStatusCode);
     expect(body.message).toEqual(expectedErrorMessage);
+    expect(clientError).toBeTrue();
   });
 
   it(`POST '${BasePath}' and '${BasePathAsync}' should respond correctly`, async () => {
     expect.assertions(5);
     // Arrange
     const payload = { url: "http://github.com/khatastroffik/express-poc" };
+    const expectedStatusCode = httpStatus.CREATED;
     // Act
     const { body } = await request(app)
       .post(BasePath)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.CREATED);
+      .expect(expectedStatusCode);
     const { body: bodyAsync } = await request(app)
       .post(BasePathAsync)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.CREATED);
+      .expect(expectedStatusCode);
 
     // Assert
     expect(body).not.toBeEmptyObject();
@@ -243,19 +250,20 @@ describe("URL-Shortener endpoint", () => {
     expect.assertions(5);
     // Arrange
     const payload = { url: "https://en.wikipedia.org/wiki/Möbius_strip" };
+    const expectedStatusCode = httpStatus.CREATED;
     // Act
     const { body } = await request(app)
       .post(BasePath)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.CREATED);
+      .expect(expectedStatusCode);
     const { body: bodyAsync } = await request(app)
       .post(BasePathAsync)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.CREATED);
+      .expect(expectedStatusCode);
     // Assert
     expect(body).not.toBeEmptyObject();
     expect(body.url).toEqual(bodyAsync.url);
@@ -268,19 +276,20 @@ describe("URL-Shortener endpoint", () => {
     expect.assertions(5);
     // Arrange
     const payload = { url: "https://en.wikipedia.org/wiki/M%C3%B6bius_strip" };
+    const expectedStatusCode = httpStatus.CREATED;
     // Act
     const { body } = await request(app)
       .post(BasePath)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.CREATED);
+      .expect(expectedStatusCode);
     const { body: bodyAsync } = await request(app)
       .post(BasePathAsync)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.CREATED);
+      .expect(expectedStatusCode);
     // Assert
     expect(body).not.toBeEmptyObject();
     expect(body.url).toEqual(bodyAsync.url);
@@ -294,19 +303,20 @@ describe("URL-Shortener endpoint", () => {
     // Arrange
     const payload = { url: "github.com/khatastroffik/express-poc" }; // missing protocol
     const expectedErrorMessage = "Bad Request";
+    const expectedStatusCode = httpStatus.BAD_REQUEST;
     // Act
     const { body } = await request(app)
       .post(BasePath)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.BAD_REQUEST);
+      .expect(expectedStatusCode);
     const { body: bodyAsync } = await request(app)
       .post(BasePathAsync)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.BAD_REQUEST);
+      .expect(expectedStatusCode);
     // Assert
     expect(body).not.toBeEmptyObject();
     expect(body).toStrictEqual(bodyAsync);
@@ -319,19 +329,20 @@ describe("URL-Shortener endpoint", () => {
     // Arrange
     const payload = {}; // missing url
     const expectedErrorMessage = "Bad Request";
+    const expectedStatusCode = httpStatus.BAD_REQUEST;
     // Act
     const { body } = await request(app)
       .post(BasePath)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.BAD_REQUEST);
+      .expect(expectedStatusCode);
     const { body: bodyAsync } = await request(app)
       .post(BasePathAsync)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.BAD_REQUEST);
+      .expect(expectedStatusCode);
     // Assert
     expect(body).not.toBeEmptyObject();
     expect(body).toStrictEqual(bodyAsync);
@@ -343,6 +354,7 @@ describe("URL-Shortener endpoint", () => {
     expect.assertions(4);
     // Arrange
     const payload = { url: "github.com/khatastroffik/express-poc", foo: "bar" }; // unexpected property
+    const expectedStatusCode = httpStatus.BAD_REQUEST;
     const expectedErrorMessage = "Bad Request";
     // Act
     const { body } = await request(app)
@@ -350,17 +362,63 @@ describe("URL-Shortener endpoint", () => {
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.BAD_REQUEST);
+      .expect(expectedStatusCode);
     const { body: bodyAsync } = await request(app)
       .post(BasePathAsync)
       .send(payload)
       .set("Content-Type", "application/json")
       .set("Accept", "application/json")
-      .expect(httpStatus.BAD_REQUEST);
+      .expect(expectedStatusCode);
     // Assert
     expect(body).not.toBeEmptyObject();
     expect(body).toStrictEqual(bodyAsync);
     expect(body).toContainKeys(["message", "statusCode", "status"]);
     expect(body.message).toEqual(expectedErrorMessage);
+  });
+
+  it(`DELETE '${BasePath}' should respond with '204: No Content' when an item has been successfully deleted`, async () => {
+    expect.assertions(1);
+    // Arrange
+    const testParameter = "testid";
+    const testUri = `${BasePath}/${testParameter}`;
+    const expectedStatusCode = httpStatus.NO_CONTENT;
+    // Act
+    const { body } = await request(app).delete(testUri).expect(expectedStatusCode);
+    // Assert
+    expect(body).toBeEmpty();
+  });
+
+  it(`DELETE '${BasePath}' should respond with '404: Not Found' when a non existing item should be deleted`, async () => {
+    expect.assertions(5);
+    // Arrange
+    const testParameter = "______"; // Non existing item ID (6 chars)
+    const testUri = `${BasePath}/${testParameter}`;
+    const expectedStatusCode = httpStatus.NOT_FOUND;
+    const expectedResponseBody = { message: "Not Found", status: "error", statusCode: 404 };
+    // Act
+    const { body, clientError } = await request(app).get(testUri).expect(expectedStatusCode);
+    // Assert
+    expect(body).not.toBeEmptyObject();
+    expect(body).toContainKeys(["message", "statusCode", "status"]);
+    expect(body.message).toEqual(expectedResponseBody.message);
+    expect(body.status).toEqual(expectedResponseBody.status);
+    expect(clientError).toBeTrue();
+  });
+
+  it(`DELETE '${BasePath}' should respond with '400: Bad Request' when the Id parameter is not well formed e.g. is too short`, async () => {
+    expect.assertions(5);
+    // Arrange
+    const testParameter = "_"; // wrong format of item ID (1 char, must be 6 chars)
+    const testUri = `${BasePath}/${testParameter}`;
+    const expectedStatusCode = httpStatus.BAD_REQUEST;
+    const expectedResponseBody = { message: "Bad Request", status: "error", statusCode: 400 };
+    // Act
+    const { body, clientError } = await request(app).get(testUri).expect(expectedStatusCode);
+    // Assert
+    expect(body).not.toBeEmptyObject();
+    expect(body).toContainKeys(["message", "statusCode", "status"]);
+    expect(body.message).toEqual(expectedResponseBody.message);
+    expect(body.status).toEqual(expectedResponseBody.status);
+    expect(clientError).toBeTrue();
   });
 });

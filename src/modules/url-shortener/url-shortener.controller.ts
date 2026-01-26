@@ -5,16 +5,11 @@ import UrlShortenerService from "./url-shortener.service";
 
 class UrlShortenerController {
   constructor() {
-    this.getAll = this.getAll.bind(this);
-    this.getOne = this.getOne.bind(this);
-    this.create = this.create.bind(this);
   }
 
-  async getAll(_req: Request<never, never, any, UrlItemGetAllRequestQuery>, res: Response, next: NextFunction): Promise<void> {
+  async list(_req: Request<never, never, any, UrlItemGetAllRequestQuery>, res: Response, next: NextFunction): Promise<void> {
     try {
-      // Note: "req.query" is fully typed according to "UrlItemGetAllRequestQuerySchema"
-      // i.e. according to the schema used in the query schema used in the "zalidate" router middleware.
-      const list = await UrlShortenerService.retrieveAll();
+      const list = await UrlShortenerService.list();
       res.json(list);
     }
     catch (error) {
@@ -22,10 +17,10 @@ class UrlShortenerController {
     }
   }
 
-  async getOne(req: Request, res: Response, next: NextFunction): Promise<void> {
+  async get(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const id = req.params.id as UrlId;
-      const item = await UrlShortenerService.retrieveOne(id);
+      const id = <UrlId>req.params.id;
+      const item = await UrlShortenerService.read(id);
       res.json(item);
     }
     catch (error) {
@@ -35,8 +30,19 @@ class UrlShortenerController {
 
   async create(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const newItem = await UrlShortenerService.save({ url: req.body.url });
+      const newItem = await UrlShortenerService.create({ url: req.body.url });
       res.status(status.CREATED).json(newItem);
+    }
+    catch (error) {
+      next(error);
+    }
+  }
+
+  async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const id = <UrlId>req.params.id;
+      await UrlShortenerService.delete(id);
+      res.status(status.NO_CONTENT).send();
     }
     catch (error) {
       next(error);

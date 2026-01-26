@@ -72,3 +72,9 @@ Content-Type: application/json
   "url": "https://github.com/khatastroffik",
   "unknown-property": "should not be there"
 }
+
+### URL-Shortener - Delete - [204] NO CONTENT
+DELETE {{host}}/shortener/testid
+
+### URL-Shortener - Delete - [404] NOT FOUND
+DELETE {{host}}/shortener/111111

@@ -12,12 +12,12 @@ const router: Router = express.Router();
 /**
  * Retrieve the list of url items and demonstrate ASYNCHRONOUS parsing, validating and typecasting request query parameters
  */
-router.get("/async/", zalidateAsync({ querySchema: UrlItemGetAllRequestQuerySchema }), UrlShortenerController.getAll);
+router.get("/async/", zalidateAsync({ querySchema: UrlItemGetAllRequestQuerySchema }), UrlShortenerController.list);
 
 /**
  * Retrieve a single url item and demonstrate ASYNCHRONOUS parsing, validating and typecasting the request url "id" param as well as the request headers
  */
-router.get("/async/:id", zalidateAsync({ paramsSchema: UrlItemRequestParamSchema, headersSchema: UrlItemRequestHeadersSchema }), UrlShortenerController.getOne);
+router.get("/async/:id", zalidateAsync({ paramsSchema: UrlItemRequestParamSchema, headersSchema: UrlItemRequestHeadersSchema }), UrlShortenerController.get);
 
 /**
  * Create a new url-item object and demonstrate ASYNCHRONOUS parsing, validating and typecasting the request (json) body
@@ -27,12 +27,17 @@ router.post("/async/", zalidateAsync({ bodySchema: UrlItemRequestBodySchema }), 
 /**
  * Retrieve the list of url items and demonstrate SYNCHRONOUS parsing, validating and typecasting request query parameters
  */
-router.get("/", zalidate({ querySchema: UrlItemGetAllRequestQuerySchema }), UrlShortenerController.getAll);
+router.get("/", zalidate({ querySchema: UrlItemGetAllRequestQuerySchema }), UrlShortenerController.list);
 
 /**
  * Retrieve a single url item and demonstrate SYNCHRONOUSparsing, validating and typecasting the request url "id" param as well as the request headers
  */
-router.get("/:id", zalidate({ paramsSchema: UrlItemRequestParamSchema, headersSchema: UrlItemRequestHeadersSchema }), UrlShortenerController.getOne);
+router.get("/:id", zalidate({ paramsSchema: UrlItemRequestParamSchema, headersSchema: UrlItemRequestHeadersSchema }), UrlShortenerController.get);
+
+/**
+ * Delete an existing url-item object and demonstrate SYNCHRONOUS parsing, validating and typecasting the request url "id" param
+ */
+router.delete("/:id", zalidate({ paramsSchema: UrlItemRequestParamSchema }), UrlShortenerController.delete);
 
 /**
  * Create a new url-item object and demonstrate SYNCHRONOUS parsing, validating and typecasting the request (json) body

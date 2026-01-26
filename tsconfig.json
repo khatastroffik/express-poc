@@ -6,6 +6,7 @@
     "baseUrl": "./",
     "rootDir": "src",
     "module": "nodenext",
+    "moduleResolution": "nodenext",
     "paths": {
       "@lib/*": ["./src/lib/*", "./dist/lib/*"],
       "@mw/*": ["./src/middleware/*", "./dist/middleware/*"],
