@@ -1,7 +1,5 @@
 # TypeScript Express API Service PoC
 
-<style>pre.notranslate[lang="text"], pre.hljs {line-height: initial;}</style>
-
 An API node.js/express.js service template i.e. Proof-of-Concept written in TypeScript.
 
 This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup including the use of core libraries and tools like `typescript`, `tsx`, `jest`, `supertest`, `@antfu/eslint`, `husky`, `lint-staged`, `morgan`, `winston` and `zod` (see [Project](#project) below). It is not a "one-size-fits-all" solution, thus rather a suggestion for a smooth first express-js experience.
