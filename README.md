@@ -1,5 +1,7 @@
 # TypeScript Express API Service PoC
 
+<style>pre.notranslate[lang="text"], pre.hljs {line-height: initial;}</style>
+
 An API node.js/express.js service template i.e. Proof-of-Concept written in TypeScript.
 
 This PoC offers a *minimal-footprint* but *fairly opiniated* initial setup including the use of core libraries and tools like `typescript`, `tsx`, `jest`, `supertest`, `@antfu/eslint`, `husky`, `lint-staged`, `morgan`, `winston` and `zod` (see [Project](#project) below). It is not a "one-size-fits-all" solution, thus rather a suggestion for a smooth first express-js experience.
@@ -135,38 +137,68 @@ Here are some *suggestions* for improving the setup:
 ### File &amp; folder structure
 
 ```text
-express-poc
-  ├── .husky
-  │   └── pre-commit
-  ├── .vscode
-  │   ├── extensions.json
-  │   └── settings.json
-  ├── docs
-  │   └── readme.md
-  ├── src
-  │   ├── lib
-  │   │   ├── ansi-colors.ts
-  │   │   ├── environment.ts
-  │   │   ├── errors.ts
-  │   │   ├── logger.ts
-  │   │   ├── pretty-bytes.ts
-  │   │   ├── simulations.ts
-  │   │   └── zod-schemas.ts
-  │   ├── middleware
-  │   │   ├── catch-all.ts
-  │   │   └── morgan.ts
-  │   ├── app.ts
-  │   ├── index.ts
-  ├── .env
-  ├── .gitignore
-  ├── client-simulator.rest
-  ├── eslint.config.mjs
-  ├── jest.config.js
-  ├── package.json
-  ├── pnpm-lock.yaml
-  ├── pnpm-workspace.yaml
-  ├── README.md
-  └── tsconfig.json
+📂 express-poc
+├─📂 .github
+│  └─📂 workflows
+│    └─📄 ci.yaml
+├─📂 .husky
+│  └─📄 pre-commit
+├─📂 .vscode
+│  ├─📄 extensions.json
+│  └─📄 settings.json
+├─📂 docs
+│  ├─📄 commit-messages-guideline.md
+│  ├─📄 express-poc - Swagger UI.png
+│  ├─📄 readme.md
+│  └─📄 typescript-paths-aliases.md
+├─📂 src
+│  ├─📂 lib
+│  │  ├─📄 ansi-colors.ts
+│  │  ├─📄 crud.ts
+│  │  ├─📄 environment.ts
+│  │  ├─📄 errors.ts
+│  │  ├─📄 id-service.test.ts
+│  │  ├─📄 id-service.ts
+│  │  ├─📄 iso-date.test.ts
+│  │  ├─📄 iso-date.ts
+│  │  ├─📄 logger.test.ts
+│  │  ├─📄 logger.ts
+│  │  ├─📄 pretty-bytes.test.ts
+│  │  ├─📄 pretty-bytes.ts
+│  │  ├─📄 simulations.ts
+│  │  ├─📄 valize.test.ts
+│  │  ├─📄 valize.ts
+│  │  ├─📄 zod-schemas.test.ts
+│  │  └─📄 zod-schemas.ts
+│  ├─📂 middleware
+│  │  ├─📄 catch-all.ts
+│  │  ├─📄 morgan.ts
+│  │  └─📄 zalidate.ts
+│  ├─📂 modules
+│  │  ├─📂 openapi
+│  │  │  ├─📄 openapi.controller.ts
+│  │  │  ├─📄 openapi.domain.ts
+│  │  │  ├─📄 openapi.router.ts
+│  │  │  └─📄 openapi.service.ts
+│  │  └─📂 url-shortener
+│  │    ├─📄 url-shortener.controller.ts
+│  │    ├─📄 url-shortener.domain.ts
+│  │    ├─📄 url-shortener.router.ts
+│  │    └─📄 url-shortener.service.ts
+│  ├─📄 app.test.ts
+│  ├─📄 app.ts
+│  └─📄 index.ts
+├─📄 .env
+├─📄 .gitignore
+├─📄 client-simulator.rest
+├─📄 eslint.config.mjs
+├─📄 jest.config.js
+├─📄 LICENSE
+├─📄 package.json
+├─📄 pnpm-lock.yaml
+├─📄 pnpm-workspace.yaml
+├─📄 README.md
+└─📄 tsconfig.json
 ```
 
 <!-- node bin\tree-cli.js --ignore node_modules,.git,dist,logs,.husky\_ --dir ..\express-poc -->
