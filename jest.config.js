@@ -8,6 +8,7 @@ const isCI = require("node:process").env.CI;
 module.exports = {
   verbose: !isCI,
   preset: "ts-jest/presets/js-with-ts",
+  moduleDirectories: ["node_modules", "<rootDir>/src"],
   moduleFileExtensions: ["ts", "tsx", "js"],
   moduleNameMapper: {
     "@lib/(.*)": "<rootDir>/src/lib/$1",

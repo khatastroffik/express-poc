@@ -3,7 +3,6 @@
     "target": "esnext",
     "lib": ["esnext"],
     "moduleDetection": "force",
-    "baseUrl": "./",
     "rootDir": "src",
     "module": "nodenext",
     "moduleResolution": "nodenext",
@@ -12,6 +11,7 @@
       "@mw/*": ["./src/middleware/*", "./dist/middleware/*"],
       "@modules/*": ["./src/modules/*", "./dist/modules/*"]
     },
+    "types": ["jest"],
     "strict": true,
     "exactOptionalPropertyTypes": true,
     "noFallthroughCasesInSwitch": true,
