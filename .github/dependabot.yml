@@ -3,32 +3,32 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: npm # See documentation for possible values
+    directory: / # Location of package manifests
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "18:00"      
-  - package-ecosystem: "docker"
+      interval: weekly
+      day: sunday
+      time: "18:00"
+  - package-ecosystem: docker
     # Look for a `Dockerfile` in the `root` directory
-    directory: "/"
+    directory: /
     # Check for updates once a week
     schedule:
-      interval: "weekly"      
-      day: "sunday"
-      time: "18:00"      
-  - package-ecosystem: "github-actions"
-    directory: "/"
+      interval: weekly
+      day: sunday
+      time: "18:00"
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "sunday"
+      interval: weekly
+      day: sunday
       time: "18:00"
     groups:
       all-actions:
-        patterns: [ "*" ]
-  - package-ecosystem: "gitsubmodule"
-    directory: "/"
+        patterns: ["*"]
+  - package-ecosystem: gitsubmodule
+    directory: /
     schedule:
-      interval: "weekly"
-      day: "sunday"
-      time: "18:00"        
+      interval: weekly
+      day: sunday
+      time: "18:00"
