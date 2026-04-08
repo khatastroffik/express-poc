@@ -35,7 +35,8 @@ jobs:
 
       - name: Dependency Review
         uses: actions/dependency-review-action@v4
-
+        env:
+          FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
         with:
           # Commonly enabled options, see https://github.com/actions/dependency-review-action#configuration-options for all available options.
           comment-summary-in-pr: always
